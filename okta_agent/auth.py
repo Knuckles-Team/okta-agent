@@ -60,6 +60,7 @@ def get_client() -> Api:
     client_id = os.getenv("OKTA_CLIENT_ID", "")
     private_key = _load_private_key()
 
+    credential: SswsToken | PrivateKeyJwt | NoCredential
     if api_token:
         credential = SswsToken(api_token)
     elif client_id and private_key:

@@ -12,7 +12,7 @@ from okta_agent.mcp.common import destructive_blocked, dispatch, parse_params
 DESTRUCTIVE_POLICY_ACTIONS = {"deactivate", "deactivate_rule"}
 
 POLICY_ACTIONS = (
-    "list, get, list_rules, activate, deactivate, activate_rule, " "deactivate_rule"
+    "list, get, list_rules, activate, deactivate, activate_rule, deactivate_rule"
 )
 
 #: Write actions intentionally out of scope in this release (see module docs

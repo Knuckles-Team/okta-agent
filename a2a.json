@@ -1,0 +1,22 @@
+{
+  "name": "okta-agent",
+  "type": "agent",
+  "version": "0.1.0",
+  "description": "Okta agent: users, groups, applications, policies, and the system log over the Okta Management API, with destructive-action gating and rate-limit awareness.",
+  "url": "https://github.com/Knuckles-Team/okta-agent/tree/main",
+  "license": "MIT",
+  "capabilities": [
+    {
+      "id": "run_graph_flow",
+      "name": "Graph Flow Execution",
+      "description": "Execute a workflow through the agent's graph orchestration engine"
+    }
+  ],
+  "tools": [
+    {
+      "id": "graph-flow",
+      "type": "flow",
+      "description": "Run complex multi-step workflows via Pydantic-Graph"
+    }
+  ]
+}

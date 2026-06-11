@@ -1,4 +1,35 @@
-# okta-agent
+# Okta Agent
+## CLI or API | MCP | Agent
+
+![PyPI - Version](https://img.shields.io/pypi/v/okta-agent)
+![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
+![PyPI - Downloads](https://img.shields.io/pypi/dd/okta-agent)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/okta-agent)
+![PyPI - License](https://img.shields.io/pypi/l/okta-agent)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/okta-agent)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/okta-agent)
+
+*Version: 0.1.0*
+
+> **Documentation** — Installation, deployment, usage across the API, CLI, and MCP
+> server live on the docs site:
+> <https://knuckles-team.github.io/okta-agent/>
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Configure](#configure)
+- [Environment Variables](#environment-variables)
+- [Quick Start](#quick-start)
+- [Run](#run)
+- [MCP Tools](#mcp-tools)
+- [Deployment](#deployment)
+- [Keycloak Parity](#keycloak-parity)
+- [Development](#development)
+
+## Overview
 
 Enterprise CIAM/SSO connector for the agent fleet: a production-grade MCP
 server and Pydantic AI agent over the **Okta Management API** — users, groups,
@@ -17,7 +48,18 @@ verb taxonomy so agents can switch IdPs with familiar verbs.
   password ops) are blocked unless explicitly allowed; credential material is
   redacted from logs and error envelopes.
 
-## Install
+## Architecture
+
+```mermaid
+graph TD
+    User([User/A2A]) --> Server[A2A Server / okta-agent]
+    Server --> Agent[Pydantic AI Agent]
+    Agent --> MCP[MCP Server / okta-mcp]
+    MCP --> Client[Api facade / httpx]
+    Client --> ExternalAPI([Okta Management API])
+```
+
+## Installation
 
 ```bash
 pip install okta-agent            # core API client
@@ -42,6 +84,47 @@ export OKTA_SCOPES="okta.users.read okta.groups.manage"
 See `.env.example` for every knob (`OKTA_SSL_VERIFY`, `OKTA_MAX_RETRIES`,
 `OKTA_BACKOFF_CAP_SECONDS`, `OKTA_ALLOW_DESTRUCTIVE`, per-tool switches).
 
+## Environment Variables
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `OKTA_ORG_URL` | — | Okta org URL, no trailing slash (`OKTA_AGENT_BASE_URL` accepted as fallback) |
+| `OKTA_API_TOKEN` | — | SSWS API token (auth mode 1, takes precedence) |
+| `OKTA_CLIENT_ID` | — | Service-app client id (private-key-JWT) |
+| `OKTA_PRIVATE_KEY` / `OKTA_PRIVATE_KEY_FILE` | — | PEM private key inline or path |
+| `OKTA_KEY_ID` | — | Optional JWKS key id for the client assertion |
+| `OKTA_SCOPES` | read scopes | Space-separated Okta API scopes |
+| `OKTA_SSL_VERIFY` | `True` | TLS verification toward the org |
+| `OKTA_MAX_RETRIES` | `2` | 429 retry attempts |
+| `OKTA_BACKOFF_CAP_SECONDS` | `60` | 429 backoff cap |
+| `OKTA_ALLOW_DESTRUCTIVE` | `False` | Org-wide default for destructive tool actions |
+| `HOST` / `PORT` / `TRANSPORT` | `0.0.0.0` / `8000` / `stdio` | MCP server bind + transport |
+| `USERSTOOL` / `GROUPSTOOL` / `APPSTOOL` / `POLICIESTOOL` / `SYSTEMTOOL` | `True` | Per-domain tool toggles |
+| `ENABLE_OTEL` / `OTEL_EXPORTER_OTLP_*` | — | Telemetry (OTEL / Langfuse) |
+| `EUNOMIA_TYPE` / `EUNOMIA_POLICY_FILE` / `EUNOMIA_REMOTE_URL` | `none` | MCP authorization middleware |
+| `AUTH_TYPE` | `none` | MCP server auth mode (Docker) |
+| `DEFAULT_AGENT_NAME` / `AGENT_DESCRIPTION` / `AGENT_SYSTEM_PROMPT` | identity files | A2A agent identity overrides |
+
+## Quick Start
+
+```python
+from okta_agent import Api
+from okta_agent.api.credentials import SswsToken
+from okta_agent.okta_input_models import SearchInput, FilterCondition
+
+api = Api(org_url="https://acme.okta.com", credential=SswsToken("<token>"))
+
+active = api.search_users(
+    conditions=[{"field": "status", "op": "eq", "value": "ACTIVE"}],
+)
+print(active["data"], active["rate_limit"])
+
+# Or build typed tool params for the MCP surface:
+params = SearchInput(
+    conditions=[FilterCondition(field="status", op="eq", value="ACTIVE")]
+).model_dump_json(exclude_none=True)
+```
+
 ## Run
 
 ```bash
@@ -50,7 +133,7 @@ okta-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 okta-agent                                # A2A agent server
 ```
 
-## Tools
+## MCP Tools
 
 Five consolidated, action-routed tools. Each takes `action`, `params_json`,
 and (where applicable) `allow_destructive`.
@@ -84,6 +167,21 @@ Every successful response is an envelope:
 ```
 
 Errors map Okta's envelope: `{"error": {"status", "error_code", "error_summary", "error_id", "error_causes", "rate_limit"}}`.
+
+## Deployment
+
+```bash
+# MCP server only (port 8000, streamable-http, /health)
+docker compose -f docker/mcp.compose.yml up -d
+
+# MCP server + A2A agent server (agent on port 9021, AG-UI web interface)
+docker compose -f docker/agent.compose.yml up -d
+```
+
+The A2A agent server (`okta-agent` console script, `agent_server.py`) reads
+`MCP_URL`, `PROVIDER`, and `MODEL_ID` from the environment. Prebuilt image:
+`knucklessg1/okta-agent:latest`. See [docs/deployment.md](docs/deployment.md)
+for transports, reverse proxy, and DNS guidance.
 
 ## Keycloak parity
 

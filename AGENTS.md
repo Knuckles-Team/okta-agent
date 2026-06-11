@@ -17,6 +17,35 @@ This file acts as a machine-readable README for AI coding agents collaborating o
   - `okta_agent/api/api_client_base.py`: rate limits, 429 backoff, pagination, error mapping, redaction.
   - `okta_agent/mcp/common.py`: destructive-action gate and error envelopes.
 
+### Architecture Diagram
+```mermaid
+graph TD
+    User([User/A2A]) --> Server[A2A Server / FastAPI]
+    Server --> Agent[Pydantic AI Agent]
+    Agent --> MCP[MCP Server / FastMCP]
+    MCP --> Client[API Client / httpx]
+    Client --> ExternalAPI([Okta Management API])
+```
+
+### Workflow Diagram
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant S as Server
+    participant A as Agent
+    participant T as MCP Tool
+    participant API as Okta API
+
+    U->>S: Request
+    S->>A: Process Query
+    A->>T: Invoke Tool
+    T->>API: API Request
+    API-->>T: API Response
+    T-->>A: Tool Result
+    A-->>S: Final Response
+    S-->>U: Output
+```
+
 ## Commands
 
 ### Quality & Linting
@@ -46,38 +75,49 @@ pytest -v
 ├── .env.example
 ├── .gitignore
 ├── .pre-commit-config.yaml
+├── a2a.json
 ├── AGENTS.md
 ├── CHANGELOG.md
 ├── LICENSE
-├── README.md
+├── MANIFEST.in
+├── mcp_config.json
 ├── mkdocs.yml
+├── opencode.json
 ├── pyproject.toml
 ├── pytest.ini
+├── README.md
 ├── requirements.txt
+├── uv.lock
 ├── docker
 │   ├── Dockerfile
-│   └── compose.yml
+│   ├── debug.Dockerfile
+│   ├── agent.compose.yml
+│   ├── mcp.compose.yml
+│   └── starship.toml
 ├── docs
 │   ├── concepts.md
+│   ├── deployment.md
 │   ├── index.md
 │   ├── installation.md
 │   ├── overview.md
 │   └── usage.md
-├── prompts
-│   └── main_agent.md
 ├── scripts
-│   └── security_sanitizer.py
+│   ├── security_sanitizer.py
+│   ├── validate_a2a_agent.py
+│   ├── validate_agent.py
+│   └── verify_api_integration.py
 ├── tests
 │   ├── conftest.py
+│   ├── test_api_wrapper.py
 │   ├── test_apps_client.py
 │   ├── test_auth.py
-│   ├── test_base_client.py
 │   ├── test_concept_parity.py
 │   ├── test_credentials.py
 │   ├── test_filters.py
 │   ├── test_groups_client.py
 │   ├── test_init_dynamics.py
-│   ├── test_mcp_tools.py
+│   ├── test_okta_mcp_validation.py
+│   ├── test_okta_models.py
 │   ├── test_pagination.py
 │   ├── test_policies_client.py
 │   ├── test_startup.py
@@ -99,6 +139,7 @@ pytest -v
     │   └── filters.py
     ├── api_client.py
     ├── auth.py
+    ├── main_agent.json
     ├── mcp
     │   ├── __init__.py
     │   ├── common.py
@@ -108,7 +149,9 @@ pytest -v
     │   ├── mcp_system.py
     │   └── mcp_users.py
     ├── mcp_config.json
-    └── mcp_server.py
+    ├── mcp_server.py
+    ├── okta_input_models.py
+    └── okta_response_models.py
 ```
 
 ## Concept Registry

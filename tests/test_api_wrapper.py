@@ -154,6 +154,7 @@ class TestErrorEnvelopeMapping:
         with pytest.raises(OktaApiError) as excinfo:
             make_api(handler).get_org()
         assert excinfo.value.status == 502
+        assert excinfo.value.error_summary is not None
         assert "Bad Gateway" in excinfo.value.error_summary
 
     def test_204_maps_to_success(self, make_api):
@@ -174,6 +175,7 @@ class TestRedaction:
 
         with pytest.raises(OktaApiError) as excinfo:
             make_api(handler).get_org()
+        assert excinfo.value.error_summary is not None
         assert TEST_TOKEN not in excinfo.value.error_summary
         assert "***REDACTED***" in excinfo.value.error_summary
 

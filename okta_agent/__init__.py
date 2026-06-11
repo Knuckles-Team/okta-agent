@@ -7,7 +7,11 @@ from typing import Any
 __version__ = "0.1.0"
 __all__: list[str] = []
 
-CORE_MODULES = ["okta_agent.api_client"]
+CORE_MODULES = [
+    "okta_agent.okta_input_models",
+    "okta_agent.okta_response_models",
+    "okta_agent.api_client",
+]
 OPTIONAL_MODULES = {
     "okta_agent.agent_server": "agent",
     "okta_agent.mcp_server": "mcp",
@@ -28,7 +32,7 @@ for module_name in CORE_MODULES:
     module = importlib.import_module(module_name)
     _expose_members(module)
 
-_loaded_optional_modules = {}
+_loaded_optional_modules: dict[str, Any] = {}
 
 
 def _import_module_safely(module_name: str):

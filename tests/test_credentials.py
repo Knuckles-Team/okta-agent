@@ -1,6 +1,7 @@
 """CONCEPT:OKTA-1.2 Auth header injection: SSWS token and OAuth2 private-key-JWT."""
 
 import time
+from typing import Any
 from urllib.parse import parse_qs
 
 import httpx
@@ -84,7 +85,7 @@ class TestNoCredential:
 class TestPrivateKeyJwt:
     def test_token_request_shape_and_assertion_claims(self, rsa_keypair):
         private_pem, public_pem = rsa_keypair
-        captured = {}
+        captured: dict[str, Any] = {}
 
         def handler(request):
             captured["url"] = str(request.url)

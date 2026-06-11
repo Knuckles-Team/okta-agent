@@ -20,7 +20,7 @@ text = "MIT"
 [project.optional-dependencies]
 mcp = [ "agent-utilities[mcp]>=0.47.0",]
 agent = [ "agent-utilities[agent,logfire]>=0.47.0",]
-all = [ "agent-utilities[mcp,agent,logfire]>=0.47.0",]
+all = [ "okta-agent[mcp,agent,logfire]>=0.1.0",]
 test = [ "pytest-xdist>=3.6.0", "pytest", "pytest-asyncio", "pytest-cov",]
 
 [project.scripts]
@@ -51,3 +51,6 @@ ignore = [ "E402", "E501", "B008",]
 
 [tool.setuptools.packages.find]
 where = [ ".",]
+
+[tool.vulture]
+ignore_names = ["request", "config"]

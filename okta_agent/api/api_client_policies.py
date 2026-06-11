@@ -16,7 +16,7 @@ from okta_agent.api.api_client_base import ApiClientBase, drop_none
 #: Friendly aliases → Okta policy type identifiers.
 POLICY_TYPES = {
     "okta_sign_on": "OKTA_SIGN_ON",
-    "password": "PASSWORD",
+    "password": "PASSWORD",  # nosec B105 - policy type id, not a credential
     "mfa_enroll": "MFA_ENROLL",
     "access_policy": "ACCESS_POLICY",
 }

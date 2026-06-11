@@ -1,0 +1,36 @@
+{
+  "mcpServers": {
+    "okta-agent": {
+      "command": "uv",
+      "args": [
+        "run",
+        "okta-mcp"
+      ],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "<YOUR_FASTMCP_LOG_LEVEL>",
+        "NO_COLOR": "<YOUR_NO_COLOR>",
+        "TERM": "<YOUR_TERM>",
+        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
+        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
+        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
+        "MCP_URL": "<YOUR_MCP_URL>",
+        "OKTA_ORG_URL": "<YOUR_OKTA_ORG_URL>",
+        "OKTA_API_TOKEN": "<YOUR_OKTA_API_TOKEN>",
+        "OKTA_CLIENT_ID": "<YOUR_OKTA_CLIENT_ID>",
+        "OKTA_PRIVATE_KEY": "<YOUR_OKTA_PRIVATE_KEY>",
+        "OKTA_PRIVATE_KEY_FILE": "<YOUR_OKTA_PRIVATE_KEY_FILE>",
+        "OKTA_KEY_ID": "<YOUR_OKTA_KEY_ID>",
+        "OKTA_SCOPES": "<YOUR_OKTA_SCOPES>",
+        "OKTA_SSL_VERIFY": "<YOUR_OKTA_SSL_VERIFY>",
+        "OKTA_MAX_RETRIES": "2",
+        "OKTA_BACKOFF_CAP_SECONDS": "60",
+        "OKTA_ALLOW_DESTRUCTIVE": "False",
+        "USERSTOOL": "True",
+        "GROUPSTOOL": "True",
+        "APPSTOOL": "True",
+        "POLICIESTOOL": "True",
+        "SYSTEMTOOL": "True"
+      }
+    }
+  }
+}
