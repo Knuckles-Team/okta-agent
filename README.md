@@ -183,6 +183,21 @@ The A2A agent server (`okta-agent` console script, `agent_server.py`) reads
 `knucklessg1/okta-agent:latest`. See [docs/deployment.md](docs/deployment.md)
 for transports, reverse proxy, and DNS guidance.
 
+<!-- BEGIN GENERATED: additional-deployment-options -->
+### Additional Deployment Options
+
+`okta-agent` can also run as a **local container** (Docker / Podman / `uv`) or be
+consumed from a **remote deployment**. The
+[Deployment guide](https://knuckles-team.github.io/okta-agent/deployment/) has full, copy-paste
+`mcp_config.json` for all four transports — **stdio**, **streamable-http**,
+**local container / uv**, and **remote URL**:
+
+- **Local container / uv** — launch the server from `mcp_config.json` via `uvx`,
+  `docker run`, or `podman run`, or point at a local streamable-http container by `url`.
+- **Remote URL** — connect to a server deployed behind Caddy at
+  `http://okta-mcp.arpa/mcp` using the `"url"` key.
+<!-- END GENERATED: additional-deployment-options -->
+
 ## Keycloak parity
 
 Verbs intentionally mirror `keycloak-agent` where the concepts overlap, so an
