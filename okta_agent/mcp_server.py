@@ -19,7 +19,7 @@ from okta_agent.mcp import (
     register_users_tools,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 logger = get_logger(name="okta_agent")
 
 
