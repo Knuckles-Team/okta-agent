@@ -19,7 +19,8 @@ gate for destructive tool actions, see :mod:`okta_agent.mcp`).
 
 import os
 
-from agent_utilities.base_utilities import get_logger, to_boolean
+from agent_utilities.base_utilities import get_logger
+from agent_utilities.core.config import setting
 
 from okta_agent.api.api_client_base import (
     DEFAULT_BACKOFF_CAP,
@@ -35,10 +36,10 @@ DEFAULT_SCOPES = "okta.users.read okta.groups.read okta.apps.read"
 
 def _load_private_key() -> str | None:
     """Read the private key from OKTA_PRIVATE_KEY or OKTA_PRIVATE_KEY_FILE."""
-    pem = os.getenv("OKTA_PRIVATE_KEY", "")
+    pem = setting("OKTA_PRIVATE_KEY", "")
     if pem:
         return pem
-    path = os.getenv("OKTA_PRIVATE_KEY_FILE", "")
+    path = setting("OKTA_PRIVATE_KEY_FILE", "")
     if path and os.path.exists(path):
         with open(path) as handle:
             return handle.read()
@@ -47,17 +48,17 @@ def _load_private_key() -> str | None:
 
 def get_client() -> Api:
     """Get an authenticated Okta Management API client from the environment."""
-    org_url = os.getenv("OKTA_ORG_URL") or os.getenv("OKTA_AGENT_BASE_URL", "")
+    org_url = setting("OKTA_ORG_URL", "") or setting("OKTA_AGENT_BASE_URL", "")
     if not org_url:
         # Default fallback for testing
         org_url = "https://localhost"
 
-    verify = to_boolean(os.getenv("OKTA_SSL_VERIFY", "True"))
-    max_retries = int(os.getenv("OKTA_MAX_RETRIES", str(DEFAULT_MAX_RETRIES)))
-    backoff_cap = float(os.getenv("OKTA_BACKOFF_CAP_SECONDS", str(DEFAULT_BACKOFF_CAP)))
+    verify = setting("OKTA_SSL_VERIFY", True)
+    max_retries = setting("OKTA_MAX_RETRIES", DEFAULT_MAX_RETRIES)
+    backoff_cap = setting("OKTA_BACKOFF_CAP_SECONDS", DEFAULT_BACKOFF_CAP)
 
-    api_token = os.getenv("OKTA_API_TOKEN", "")
-    client_id = os.getenv("OKTA_CLIENT_ID", "")
+    api_token = setting("OKTA_API_TOKEN", "")
+    client_id = setting("OKTA_CLIENT_ID", "")
     private_key = _load_private_key()
 
     credential: SswsToken | PrivateKeyJwt | NoCredential
@@ -68,8 +69,8 @@ def get_client() -> Api:
             org_url=org_url,
             client_id=client_id,
             private_key_pem=private_key,
-            scopes=os.getenv("OKTA_SCOPES", DEFAULT_SCOPES).split(),
-            kid=os.getenv("OKTA_KEY_ID") or None,
+            scopes=setting("OKTA_SCOPES", DEFAULT_SCOPES).split(),
+            kid=setting("OKTA_KEY_ID", "") or None,
             verify=verify,
         )
     else:
@@ -91,4 +92,4 @@ def get_client() -> Api:
 
 def allow_destructive_default() -> bool:
     """CONCEPT:OKTA-1.4 Org-wide default for the destructive-action gate."""
-    return to_boolean(os.getenv("OKTA_ALLOW_DESTRUCTIVE", "False"))
+    return setting("OKTA_ALLOW_DESTRUCTIVE", False)
