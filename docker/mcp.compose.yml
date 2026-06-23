@@ -1,6 +1,6 @@
 services:
   okta-agent-mcp:
-    image: knucklessg1/okta-agent:latest
+    image: knucklessg1/okta-agent:mcp
     container_name: okta-agent-mcp
     hostname: okta-agent-mcp
     restart: always
