@@ -61,11 +61,55 @@ graph TD
 
 ## Installation
 
+> **Install the slim `[mcp]` extra.** For MCP-server hosting (including `uvx` /
+> container deploys), install `okta-agent[mcp]` — the MCP-server extra that pulls
+> only the FastMCP / FastAPI tooling (`agent-utilities[mcp]`). It deliberately
+> **excludes** the heavy agent runtime (the epistemic-graph engine, `pydantic-ai`,
+> `dspy`, `llama-index`, `tree-sitter`), so installs are dramatically smaller and
+> faster. Use the full `[agent]` extra only when you need the integrated Pydantic
+> AI agent.
+
+Pick the extra that matches what you want to run:
+
+| Extra | Installs | Use when |
+|-------|----------|----------|
+| `okta-agent[mcp]` | Slim MCP server only (`agent-utilities[mcp]` — FastMCP/FastAPI) | You only run the **MCP server** (smallest install / image) |
+| `okta-agent[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | You run the **integrated A2A agent** |
+| `okta-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
+
 ```bash
 pip install okta-agent            # core API client
-pip install okta-agent[mcp]       # + MCP server
-pip install okta-agent[agent]     # + Pydantic AI agent server
+pip install okta-agent[mcp]       # slim MCP server (FastMCP/FastAPI)
+pip install okta-agent[agent]     # full A2A agent runtime + epistemic-graph engine
+pip install okta-agent[all]       # everything (development)
 ```
+
+### Container images (`:mcp` vs `:agent`)
+
+One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+
+| Image tag | Build target | Contents | Entrypoint |
+|-----------|--------------|----------|------------|
+| `knucklessg1/okta-agent:mcp` | `--target mcp` | `okta-agent[mcp]` — **slim**, no engine/`pydantic-ai`/`dspy`/`llama-index`/`tree-sitter` | `okta-mcp` |
+| `knucklessg1/okta-agent:latest` | `--target agent` (default) | `okta-agent[agent]` — **full** agent runtime + epistemic-graph engine | `okta-agent` |
+
+```bash
+docker build --target mcp   -t knucklessg1/okta-agent:mcp    docker/   # slim MCP server
+docker build --target agent -t knucklessg1/okta-agent:latest docker/   # full agent
+```
+
+`docker/mcp.compose.yml` runs the slim `:mcp` server; `docker/agent.compose.yml` runs the
+agent (`:latest`) with a co-located `:mcp` sidecar.
+
+### Knowledge-graph database (`epistemic-graph`)
+
+The **full agent** (`[agent]` / `:latest`) embeds the **epistemic-graph** engine (pulled in
+transitively via `agent-utilities[agent]`). For production — or to share one knowledge graph
+across multiple agents — run **epistemic-graph as its own database container** and point the
+agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
+config, and the full database architecture (with diagrams) are documented in the
+[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+The slim `[mcp]` server does **not** require the database.
 
 ## Configure
 
@@ -186,9 +230,11 @@ docker compose -f docker/agent.compose.yml up -d
 ```
 
 The A2A agent server (`okta-agent` console script, `agent_server.py`) reads
-`MCP_URL`, `PROVIDER`, and `MODEL_ID` from the environment. Prebuilt image:
-`knucklessg1/okta-agent:latest`. See [docs/deployment.md](docs/deployment.md)
-for transports, reverse proxy, and DNS guidance.
+`MCP_URL`, `PROVIDER`, and `MODEL_ID` from the environment. Prebuilt images:
+`knucklessg1/okta-agent:mcp` (slim MCP server) and `knucklessg1/okta-agent:latest`
+(full agent) — see [Container images](#container-images-mcp-vs-agent). See
+[docs/deployment.md](docs/deployment.md) for transports, reverse proxy, and DNS
+guidance.
 
 <!-- BEGIN GENERATED: additional-deployment-options -->
 ### Additional Deployment Options
