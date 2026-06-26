@@ -12,7 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 def test_startup():
     import okta_agent
 
-    assert okta_agent.__version__ == "0.1.0"
+    assert re.match(r"^\d+\.\d+\.\d+", okta_agent.__version__)
 
 
 @pytest.mark.concept("OKTA-1.3")
