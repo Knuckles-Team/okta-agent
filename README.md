@@ -148,6 +148,7 @@ See `.env.example` for every knob (`OKTA_SSL_VERIFY`, `OKTA_MAX_RETRIES`,
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
 | `EUNOMIA_REMOTE_URL` | `http://eunomia-server:8000` |  |
 | `OKTA_ORG_URL` | `https://acme.okta.com` | Okta org URL (no trailing slash), e.g. https://acme.okta.com |
+| `OKTA_AGENT_BASE_URL` | — | Accepted as a fallback for OKTA_ORG_URL when that is unset |
 | `OKTA_API_TOKEN` | — |  |
 | `OKTA_CLIENT_ID` | — | Service-app client id (org authorization server, client_credentials grant) |
 | `OKTA_PRIVATE_KEY` | — | PEM private key inline, or a path to a PEM file |
@@ -183,7 +184,7 @@ See `.env.example` for every knob (`OKTA_SSL_VERIFY`, `OKTA_MAX_RETRIES`,
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_27 package + 14 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_28 package + 14 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -243,6 +244,8 @@ and (where applicable) `allow_destructive`.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
+#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `okta_apps` | `APPSTOOL` | Manage Okta applications — CRUD, lifecycle, and user/group assignments. |
@@ -251,7 +254,71 @@ and (where applicable) `allow_destructive`.
 | `okta_system` | `SYSTEMTOOL` | Inspect the Okta org — settings, auth servers, system log, authenticators, zones. |
 | `okta_users` | `USERSTOOL` | Manage Okta users — lifecycle, credentials, groups/apps/factors, sessions. |
 
-_5 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
+
+<details>
+<summary>54 per-operation tools — one per public API method (click to expand)</summary>
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `okta_activate_app` | `APITOOL` | Activate an application. |
+| `okta_activate_group_rule` | `APITOOL` | Activate a group rule. |
+| `okta_activate_policy` | `APITOOL` | Activate a policy. |
+| `okta_activate_policy_rule` | `APITOOL` | Activate a policy rule. |
+| `okta_activate_user` | `APITOOL` | Activate a STAGED/DEPROVISIONED user. |
+| `okta_add_group_member` | `APITOOL` | Add a user to a group. |
+| `okta_assign_group_to_app` | `APITOOL` | Assign a group to an app. |
+| `okta_assign_user_to_app` | `APITOOL` | Assign a user to an app with an optional app-specific profile. |
+| `okta_clear_user_sessions` | `APITOOL` | Revoke all of a user's sessions — destructive. |
+| `okta_create_app` | `APITOOL` | Create an app from a basic template (``oidc``/``saml``/``bookmark``). |
+| `okta_create_group` | `APITOOL` | Create an OKTA_GROUP. |
+| `okta_create_group_rule` | `APITOOL` | Create an INACTIVE group rule from an Okta Expression Language condition. |
+| `okta_create_user` | `APITOOL` | Create a user, optionally activated immediately. |
+| `okta_deactivate_app` | `APITOOL` | Deactivate an application — destructive. |
+| `okta_deactivate_group_rule` | `APITOOL` | Deactivate a group rule — destructive. |
+| `okta_deactivate_policy` | `APITOOL` | Deactivate a policy — destructive. |
+| `okta_deactivate_policy_rule` | `APITOOL` | Deactivate a policy rule — destructive. |
+| `okta_deactivate_user` | `APITOOL` | Deactivate (deprovision) a user — destructive. |
+| `okta_delete_group` | `APITOOL` | Delete a group — destructive. |
+| `okta_expire_password` | `APITOOL` | Expire a user's password — destructive. |
+| `okta_get_app` | `APITOOL` | Get one application by id. |
+| `okta_get_group` | `APITOOL` | Get one group by id. |
+| `okta_get_org` | `APITOOL` | Get the org settings (company info, subdomain, status). |
+| `okta_get_policy` | `APITOOL` | Get one policy, optionally expanded with its rules. |
+| `okta_get_system_log` | `APITOOL` | Query the system log (audit events), capped and cursor-paginated. |
+| `okta_get_user` | `APITOOL` | Get one user by id, login, or login shortname. |
+| `okta_list_app_groups` | `APITOOL` | List the groups assigned to an app. |
+| `okta_list_app_users` | `APITOOL` | List the users assigned to an app. |
+| `okta_list_apps` | `APITOOL` | List applications with optional ``q`` label match or SCIM ``filter``. |
+| `okta_list_authenticators` | `APITOOL` | List the org's authenticators (Okta Verify, WebAuthn, password, ...). |
+| `okta_list_authorization_servers` | `APITOOL` | List custom authorization servers. |
+| `okta_list_group_members` | `APITOOL` | List the users in a group. |
+| `okta_list_group_rules` | `APITOOL` | List group rules. |
+| `okta_list_groups` | `APITOOL` | List groups with optional ``q`` name prefix, SCIM ``filter`` or ``search``. |
+| `okta_list_network_zones` | `APITOOL` | List network zones. |
+| `okta_list_org_factors` | `APITOOL` | List org-level MFA factor enablement (legacy Factors API view). |
+| `okta_list_policies` | `APITOOL` | List policies of one type (``okta_sign_on``/``password``/``mfa_enroll``/``access_policy``). |
+| `okta_list_policy_rules` | `APITOOL` | List the rules of a policy. |
+| `okta_list_user_apps` | `APITOOL` | List the app links assigned to a user. |
+| `okta_list_user_factors` | `APITOOL` | List the enrolled MFA factors for a user. |
+| `okta_list_user_groups` | `APITOOL` | List the groups a user belongs to. |
+| `okta_list_users` | `APITOOL` | List users with optional ``q`` prefix match, SCIM ``filter`` or ``search``. |
+| `okta_remove_group_member` | `APITOOL` | Remove a user from a group — destructive. |
+| `okta_reset_password` | `APITOOL` | Start the password-reset flow — destructive. |
+| `okta_search_groups` | `APITOOL` | Search groups from structured SCIM conditions (built safely). |
+| `okta_search_users` | `APITOOL` | Search users from structured SCIM conditions (built safely). |
+| `okta_suspend_user` | `APITOOL` | Suspend an ACTIVE user — destructive. |
+| `okta_unassign_group_from_app` | `APITOOL` | Remove a group's app assignment — destructive. |
+| `okta_unassign_user_from_app` | `APITOOL` | Remove a user's app assignment — destructive. |
+| `okta_unlock_user` | `APITOOL` | Unlock a LOCKED_OUT user. |
+| `okta_unsuspend_user` | `APITOOL` | Return a SUSPENDED user to ACTIVE. |
+| `okta_update_app` | `APITOOL` | Replace an application (PUT semantics — pass the full app object). |
+| `okta_update_group` | `APITOOL` | Replace a group's profile (PUT semantics — name is required). |
+| `okta_update_user` | `APITOOL` | Partially update a user's profile and/or credentials. |
+
+</details>
+
+_5 action-routed tool(s) (default) · 54 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 ### Examples
