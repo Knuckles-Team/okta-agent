@@ -32,7 +32,7 @@ __all__ = [
     "register_users_tools",
 ]
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 logger = get_logger(name="okta_agent")
 
 

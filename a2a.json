@@ -1,7 +1,7 @@
 {
   "name": "okta-agent",
   "type": "agent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Okta agent: users, groups, applications, policies, and the system log over the Okta Management API, with destructive-action gating and rate-limit awareness.",
   "url": "https://github.com/Knuckles-Team/okta-agent/tree/main",
   "license": "MIT",
