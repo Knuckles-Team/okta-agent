@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.2 Okta credential strategies — SSWS token and OAuth2 private-key-JWT.
+"""CONCEPT:OK-OS.identity.okta Okta credential strategies — SSWS token and OAuth2 private-key-JWT.
 
 Two authentication modes against an Okta org:
 

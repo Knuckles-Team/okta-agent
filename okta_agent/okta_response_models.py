@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Typed response-envelope models for the Okta tool surface.
+"""CONCEPT:OK-OS.governance.okta Typed response-envelope models for the Okta tool surface.
 
 Pydantic models mirroring the response envelopes produced by
 :class:`okta_agent.api.api_client_base.ApiClientBase` and the destructive-gate

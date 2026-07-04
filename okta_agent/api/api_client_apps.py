@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Okta Applications API client (apps, assignments, lifecycle).
+"""CONCEPT:OK-OS.governance.okta Okta Applications API client (apps, assignments, lifecycle).
 
 Mirrors the keycloak-agent clients verb taxonomy (list/get/create/update,
 activate/deactivate — Keycloak "clients" are Okta "apps") so agents can switch

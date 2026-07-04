@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 System domain client: org, log caps, authenticators, zones."""
+"""CONCEPT:OK-OS.governance.okta System domain client: org, log caps, authenticators, zones."""
 
 import pytest
 
@@ -9,7 +9,7 @@ from okta_agent.api.api_client_system import (
 from tests.conftest import RequestRecorder, json_response, link_next
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestSystemClient:
     def test_org_path(self, recorded_api):
         api, recorder = recorded_api

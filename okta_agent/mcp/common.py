@@ -1,7 +1,7 @@
-"""CONCEPT:OKTA-1.3 Shared helpers for the action-routed Okta MCP tools.
+"""CONCEPT:OK-OS.governance.okta-2 Shared helpers for the action-routed Okta MCP tools.
 
 Each tool is a thin shim: it parses ``params_json``, enforces the
-CONCEPT:OKTA-1.4 destructive-action gate, dispatches to the corresponding
+CONCEPT:OK-OS.identity.default destructive-action gate, dispatches to the corresponding
 ``Api`` method, and maps :class:`okta_agent.api.api_client_base.OktaApiError`
 into a serializable error envelope. All API surface lives in
 ``okta_agent.api`` — these tools add no business logic.
@@ -28,7 +28,7 @@ def parse_params(params_json: str) -> dict[str, Any]:
 def destructive_blocked(
     action: str, destructive_actions: set[str], allow_destructive: bool
 ) -> dict[str, Any] | None:
-    """CONCEPT:OKTA-1.4 Gate destructive actions behind explicit consent.
+    """CONCEPT:OK-OS.identity.default Gate destructive actions behind explicit consent.
 
     Returns an error envelope when ``action`` is destructive and neither the
     per-call ``allow_destructive`` flag nor the ``OKTA_ALLOW_DESTRUCTIVE``

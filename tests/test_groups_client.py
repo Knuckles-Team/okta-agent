@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Groups domain client: paths, params, and body shapes."""
+"""CONCEPT:OK-OS.governance.okta Groups domain client: paths, params, and body shapes."""
 
 import json
 
@@ -9,7 +9,7 @@ def body_of(request) -> dict:
     return json.loads(request.read().decode())
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestGroupsClient:
     def test_list_groups_params(self, recorded_api):
         api, recorder = recorded_api

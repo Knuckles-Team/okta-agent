@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.3 Action-routed MCP tool modules for the Okta connector."""
+"""CONCEPT:OK-OS.governance.okta-2 Action-routed MCP tool modules for the Okta connector."""
 
 from okta_agent.mcp.common import destructive_blocked, dispatch, parse_params
 from okta_agent.mcp.mcp_apps import register_apps_tools

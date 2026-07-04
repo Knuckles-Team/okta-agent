@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Applications domain client: templates, assignments, lifecycle."""
+"""CONCEPT:OK-OS.governance.okta Applications domain client: templates, assignments, lifecycle."""
 
 import json
 
@@ -11,7 +11,7 @@ def body_of(request) -> dict:
     return json.loads(request.read().decode())
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestAppTemplates:
     def test_oidc_template_shape(self):
         body = build_app_template(
@@ -56,7 +56,7 @@ class TestAppTemplates:
             build_app_template("scim", "x", {})
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestAppsClient:
     def test_create_app_posts_template(self, recorded_api):
         api, recorder = recorded_api

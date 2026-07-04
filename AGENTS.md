@@ -158,12 +158,12 @@ pytest -v
 
 | Concept ID | Name | Description |
 |------------|------|-------------|
-| `CONCEPT:OKTA-1.1` | Core API Client Operations | Raw httpx Okta client: rate limits, backoff, pagination, error mapping |
-| `CONCEPT:OKTA-1.2` | Credential Strategies | SSWS token + OAuth2 private-key-JWT (Okta API scopes) |
-| `CONCEPT:OKTA-1.3` | FastMCP Tools Execution | Action-routed users/groups/apps/policies/system tools |
-| `CONCEPT:OKTA-1.4` | Safety Gating & Redaction | `allow_destructive` gate (default false) + secret redaction |
-| `CONCEPT:OKTA-1.5` | SCIM Filter Building | Escaped, structured `filter` expression construction |
-| `CONCEPT:ECO-4.0` | Ecosystem Compliance | Multi-package integration compliance standard |
+| `CONCEPT:OK-OS.governance.okta` | Core API Client Operations | Raw httpx Okta client: rate limits, backoff, pagination, error mapping |
+| `CONCEPT:OK-OS.identity.okta` | Credential Strategies | SSWS token + OAuth2 private-key-JWT (Okta API scopes) |
+| `CONCEPT:OK-OS.governance.okta-2` | FastMCP Tools Execution | Action-routed users/groups/apps/policies/system tools |
+| `CONCEPT:OK-OS.identity.default` | Safety Gating & Redaction | `allow_destructive` gate (default false) + secret redaction |
+| `CONCEPT:OK-OS.governance.okta-3` | SCIM Filter Building | Escaped, structured `filter` expression construction |
+| `CONCEPT:AU-ECO.messaging.native-backend-abstraction` | Ecosystem Compliance | Multi-package integration compliance standard |
 
 ## Domain Rules
 
@@ -310,7 +310,7 @@ alone).
 Working in parallel with other sessions/worktrees? **Reserve a concept id before you write its `CONCEPT:` marker** so two sessions never collide:
 
 ```bash
-agent-utilities --json concept reserve --ns KG-2   # or a package prefix, e.g. KEY
+agent-utilities --json concept reserve --ns EG-KG.compute.backend   # or a package prefix, e.g. KEY
 ```
 
 Full protocol (ledger, merge=union, reconcile, MCP/REST): <https://knuckles-team.github.io/agent-utilities/concept_coordination/>

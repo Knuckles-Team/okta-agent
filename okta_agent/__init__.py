@@ -1,4 +1,4 @@
-"""CONCEPT:ECO-4.0 okta-agent: Okta Management API + MCP Server + A2A Server."""
+"""CONCEPT:AU-ECO.messaging.native-backend-abstraction okta-agent: Okta Management API + MCP Server + A2A Server."""
 
 import importlib
 import inspect

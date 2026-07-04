@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Okta Users API client (lifecycle, credentials, related resources).
+"""CONCEPT:OK-OS.governance.okta Okta Users API client (lifecycle, credentials, related resources).
 
 Mirrors the keycloak-agent users verb taxonomy (list/get/create/update,
 reset_password, group membership) so agents can switch IdPs with familiar

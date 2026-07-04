@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.2 Environment-driven client construction."""
+"""CONCEPT:OK-OS.identity.okta Environment-driven client construction."""
 
 import pytest
 
@@ -9,7 +9,7 @@ from okta_agent.auth import allow_destructive_default, get_client
 FAKE_PEM = "-----BEGIN " + "PRIVATE KEY-----\nMIIfake\n-----END " + "PRIVATE KEY-----\n"
 
 
-@pytest.mark.concept("OKTA-1.2")
+@pytest.mark.concept("OK-OS.identity.okta")
 class TestGetClient:
     def test_ssws_token_selected(self, monkeypatch):
         monkeypatch.setenv("OKTA_ORG_URL", "https://acme.okta.example.com")
@@ -61,7 +61,7 @@ class TestGetClient:
         assert client.backoff_cap == 60.0
 
 
-@pytest.mark.concept("OKTA-1.4")
+@pytest.mark.concept("OK-OS.identity.default")
 class TestAllowDestructiveDefault:
     def test_blocked_by_default(self):
         assert allow_destructive_default() is False

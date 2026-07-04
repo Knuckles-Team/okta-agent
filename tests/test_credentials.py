@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.2 Auth header injection: SSWS token and OAuth2 private-key-JWT."""
+"""CONCEPT:OK-OS.identity.okta Auth header injection: SSWS token and OAuth2 private-key-JWT."""
 
 import time
 from typing import Any
@@ -49,7 +49,7 @@ def make_pkjwt(private_pem, handler, **kwargs) -> PrivateKeyJwt:
     )
 
 
-@pytest.mark.concept("OKTA-1.2")
+@pytest.mark.concept("OK-OS.identity.okta")
 class TestSswsToken:
     def test_header_injection(self):
         assert SswsToken(TEST_TOKEN).headers() == {
@@ -73,7 +73,7 @@ class TestSswsToken:
         assert seen["auth"] == f"SSWS {TEST_TOKEN}"
 
 
-@pytest.mark.concept("OKTA-1.2")
+@pytest.mark.concept("OK-OS.identity.okta")
 class TestNoCredential:
     def test_no_headers_no_secrets(self):
         cred = NoCredential()
@@ -81,7 +81,7 @@ class TestNoCredential:
         assert cred.secrets() == []
 
 
-@pytest.mark.concept("OKTA-1.2")
+@pytest.mark.concept("OK-OS.identity.okta")
 class TestPrivateKeyJwt:
     def test_token_request_shape_and_assertion_claims(self, rsa_keypair):
         private_pem, public_pem = rsa_keypair

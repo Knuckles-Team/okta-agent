@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.3 Typed input models for the Okta tool surface.
+"""CONCEPT:OK-OS.governance.okta-2 Typed input models for the Okta tool surface.
 
 Pydantic models mirroring the ``params_json`` contracts of the action-routed
 MCP tools in :mod:`okta_agent.mcp`. Programmatic callers can build and
@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 
 
 class FilterCondition(BaseModel):
-    """One SCIM filter clause for ``search`` actions (CONCEPT:OKTA-1.5)."""
+    """One SCIM filter clause for ``search`` actions (CONCEPT:OK-OS.governance.okta-3)."""
 
     field: str = Field(description='Attribute path, e.g. "profile.department".')
     op: str = Field(description="SCIM operator: eq, sw, gt, ge, lt, le, pr.")

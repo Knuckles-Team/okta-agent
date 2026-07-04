@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Unified Okta Management API facade.
+"""CONCEPT:OK-OS.governance.okta Unified Okta Management API facade.
 
 Composes the domain clients (users, groups, apps, policies, system) over the
 shared httpx base so one authenticated ``Api`` instance serves every tool.

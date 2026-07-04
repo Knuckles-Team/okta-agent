@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Okta Policies API client (read + lifecycle only).
+"""CONCEPT:OK-OS.governance.okta Okta Policies API client (read + lifecycle only).
 
 Scope note: policy/rule **create and update are intentionally out of scope in
 this connector's first release** — Okta policy documents are deeply nested and

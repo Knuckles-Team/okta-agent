@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.3 MCP tool for Okta group operations (action-routed)."""
+"""CONCEPT:OK-OS.governance.okta-2 MCP tool for Okta group operations (action-routed)."""
 
 from typing import Any
 
@@ -8,7 +8,7 @@ from pydantic import Field
 from okta_agent.auth import get_client
 from okta_agent.mcp.common import destructive_blocked, dispatch, parse_params
 
-#: CONCEPT:OKTA-1.4 Actions gated behind allow_destructive.
+#: CONCEPT:OK-OS.identity.default Actions gated behind allow_destructive.
 DESTRUCTIVE_GROUP_ACTIONS = {"delete", "remove_member", "deactivate_rule"}
 
 GROUP_ACTIONS = (

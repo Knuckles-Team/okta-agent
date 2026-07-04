@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Shared httpx base client for the Okta Management API.
+"""CONCEPT:OK-OS.governance.okta Shared httpx base client for the Okta Management API.
 
 Responsibilities:
 
@@ -15,7 +15,7 @@ Responsibilities:
 - Okta error-envelope mapping (``errorCode`` / ``errorSummary`` / ``errorId``
   / ``errorCauses`` → :class:`OktaApiError`)
   (https://developer.okta.com/docs/reference/error-codes/);
-- CONCEPT:OKTA-1.4 secret redaction — credential material never appears in
+- CONCEPT:OK-OS.identity.default secret redaction — credential material never appears in
   logs or raised error messages.
 """
 
@@ -42,7 +42,7 @@ _AUTH_SCHEME_RE = re.compile(r"\b(SSWS|Bearer)\s+[A-Za-z0-9._~+/=-]+")
 
 
 def redact_secrets(text: str, secrets: list[str] | None = None) -> str:
-    """Strip credential material from arbitrary text (CONCEPT:OKTA-1.4).
+    """Strip credential material from arbitrary text (CONCEPT:OK-OS.identity.default).
 
     Replaces every known secret value and any ``SSWS <token>`` /
     ``Bearer <token>`` pattern with ``***REDACTED***``.

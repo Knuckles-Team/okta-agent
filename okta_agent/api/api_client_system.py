@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Okta org/system API client (org, auth servers, system log, zones).
+"""CONCEPT:OK-OS.governance.okta Okta org/system API client (org, auth servers, system log, zones).
 
 The system log query is hard-capped (page ``limit`` <= 1000, overall items
 <= ``SYSTEM_LOG_MAX_ITEMS``) so an agent can never stream an unbounded audit

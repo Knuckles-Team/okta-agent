@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.2 Okta credentials loader and client builder.
+"""CONCEPT:OK-OS.identity.okta Okta credentials loader and client builder.
 
 Builds an authenticated :class:`okta_agent.api_client.Api` from the
 environment. Two auth modes (in precedence order):
@@ -13,7 +13,7 @@ environment. Two auth modes (in precedence order):
 
 Other knobs: ``OKTA_ORG_URL`` (e.g. ``https://acme.okta.com``),
 ``OKTA_SSL_VERIFY``, ``OKTA_MAX_RETRIES`` and ``OKTA_BACKOFF_CAP_SECONDS``
-(429 backoff), and ``OKTA_ALLOW_DESTRUCTIVE`` (CONCEPT:OKTA-1.4 — default
+(429 backoff), and ``OKTA_ALLOW_DESTRUCTIVE`` (CONCEPT:OK-OS.identity.default — default
 gate for destructive tool actions, see :mod:`okta_agent.mcp`).
 """
 
@@ -91,5 +91,5 @@ def get_client() -> Api:
 
 
 def allow_destructive_default() -> bool:
-    """CONCEPT:OKTA-1.4 Org-wide default for the destructive-action gate."""
+    """CONCEPT:OK-OS.identity.default Org-wide default for the destructive-action gate."""
     return setting("OKTA_ALLOW_DESTRUCTIVE", False)

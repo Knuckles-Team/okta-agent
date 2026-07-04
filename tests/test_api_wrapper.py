@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Base client: rate limits, 429 backoff, errors, redaction."""
+"""CONCEPT:OK-OS.governance.okta Base client: rate limits, 429 backoff, errors, redaction."""
 
 import time
 
@@ -21,7 +21,7 @@ def sleep_spy(monkeypatch):
     return calls
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestRateLimitAwareness:
     def test_rate_limit_headers_captured(self, make_api):
         api = make_api(lambda request: json_response({"id": "x"}))
@@ -49,7 +49,7 @@ class TestRateLimitAwareness:
         assert api.last_rate_limit["limit"] == 600
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestBackoffOn429:
     def test_retries_after_429_until_success(self, make_api, sleep_spy):
         state = {"n": 0}
@@ -121,7 +121,7 @@ class TestBackoffOn429:
         assert len(sleep_spy) == 1
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestErrorEnvelopeMapping:
     def test_okta_error_fields_mapped(self, make_api):
         def handler(request):
@@ -164,7 +164,7 @@ class TestErrorEnvelopeMapping:
         assert api.clear_user_sessions("u1")["data"] == {"status": "success"}
 
 
-@pytest.mark.concept("OKTA-1.4")
+@pytest.mark.concept("OK-OS.identity.default")
 class TestRedaction:
     def test_error_summary_redacts_credential(self, make_api):
         def handler(request):
@@ -191,7 +191,7 @@ class TestRedaction:
         assert out == "leak: ***REDACTED***"
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestHelpers:
     def test_drop_none(self):
         assert drop_none({"a": 1, "b": None, "c": False}) == {"a": 1, "c": False}

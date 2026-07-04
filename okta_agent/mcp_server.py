@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.3 Main FastMCP server and tool registration."""
+"""CONCEPT:OK-OS.governance.okta-2 Main FastMCP server and tool registration."""
 
 import sys
 from typing import Any

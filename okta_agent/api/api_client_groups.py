@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 Okta Groups API client (groups, membership, group rules).
+"""CONCEPT:OK-OS.governance.okta Okta Groups API client (groups, membership, group rules).
 
 Mirrors the keycloak-agent groups verb taxonomy (list/get/create/update/delete,
 member add/remove) so agents can switch IdPs with familiar verbs; group rules

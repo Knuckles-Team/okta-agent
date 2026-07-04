@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.3 MCP tool for Okta org/system operations (action-routed)."""
+"""CONCEPT:OK-OS.governance.okta-2 MCP tool for Okta org/system operations (action-routed)."""
 
 from typing import Any
 

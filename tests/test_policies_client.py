@@ -1,11 +1,11 @@
-"""CONCEPT:OKTA-1.1 Policies domain client: type aliases, rules, lifecycle."""
+"""CONCEPT:OK-OS.governance.okta Policies domain client: type aliases, rules, lifecycle."""
 
 import pytest
 
 from okta_agent.api.api_client_policies import resolve_policy_type
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestPolicyTypeResolution:
     @pytest.mark.parametrize(
         ("alias", "expected"),
@@ -25,7 +25,7 @@ class TestPolicyTypeResolution:
             resolve_policy_type("profile_enrollment_wrong")
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestPoliciesClient:
     def test_list_policies_params(self, make_api):
         from tests.conftest import RequestRecorder, json_response

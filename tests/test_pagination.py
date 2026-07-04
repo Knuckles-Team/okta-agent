@@ -1,11 +1,11 @@
-"""CONCEPT:OKTA-1.1 Cursor pagination via Okta's Link rel="next" headers."""
+"""CONCEPT:OK-OS.governance.okta Cursor pagination via Okta's Link rel="next" headers."""
 
 import pytest
 
 from tests.conftest import ORG_URL, RequestRecorder, json_response, link_next
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestLinkHeaderPagination:
     def test_follows_next_links_and_aggregates(self, make_api):
         pages = {

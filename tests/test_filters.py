@@ -1,11 +1,11 @@
-"""CONCEPT:OKTA-1.5 SCIM filter expression building."""
+"""CONCEPT:OK-OS.governance.okta-3 SCIM filter expression building."""
 
 import pytest
 
 from okta_agent.api.filters import build_filter, scim_clause, scim_value
 
 
-@pytest.mark.concept("OKTA-1.5")
+@pytest.mark.concept("OK-OS.governance.okta-3")
 class TestScimValue:
     def test_strings_quoted(self):
         assert scim_value("ACTIVE") == '"ACTIVE"'
@@ -22,7 +22,7 @@ class TestScimValue:
         assert scim_value(7) == "7"
 
 
-@pytest.mark.concept("OKTA-1.5")
+@pytest.mark.concept("OK-OS.governance.okta-3")
 class TestScimClause:
     def test_binary_clause(self):
         assert scim_clause("status", "eq", "ACTIVE") == 'status eq "ACTIVE"'
@@ -39,7 +39,7 @@ class TestScimClause:
             scim_clause("status", "eq")
 
 
-@pytest.mark.concept("OKTA-1.5")
+@pytest.mark.concept("OK-OS.governance.okta-3")
 class TestBuildFilter:
     def test_and_join(self):
         expr = build_filter(

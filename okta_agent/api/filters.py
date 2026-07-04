@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.5 SCIM-style filter expression builder for Okta list endpoints.
+"""CONCEPT:OK-OS.governance.okta-3 SCIM-style filter expression builder for Okta list endpoints.
 
 Okta list endpoints accept a SCIM 2.0-flavoured ``filter`` parameter, e.g.
 ``status eq "ACTIVE" and lastUpdated gt "2026-01-01T00:00:00.000Z"``.

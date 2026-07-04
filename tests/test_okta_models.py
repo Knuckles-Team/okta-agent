@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.1 / CONCEPT:OKTA-1.3 typed envelope and input-model contracts."""
+"""CONCEPT:OK-OS.governance.okta / CONCEPT:OK-OS.governance.okta-2 typed envelope and input-model contracts."""
 
 import json
 
@@ -22,7 +22,7 @@ from okta_agent.okta_response_models import (
 )
 
 
-@pytest.mark.concept("OKTA-1.3")
+@pytest.mark.concept("OK-OS.governance.okta-2")
 class TestInputModels:
     def test_search_input_round_trips_to_params_json(self):
         model = SearchInput(
@@ -55,7 +55,7 @@ class TestInputModels:
         assert SystemLogInput().model_dump(exclude_none=True) == {}
 
 
-@pytest.mark.concept("OKTA-1.1")
+@pytest.mark.concept("OK-OS.governance.okta")
 class TestResponseModels:
     def test_envelope_parses_api_shape(self):
         envelope = ResponseEnvelope.model_validate(

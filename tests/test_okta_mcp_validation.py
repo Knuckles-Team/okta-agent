@@ -1,4 +1,4 @@
-"""CONCEPT:OKTA-1.3 / CONCEPT:OKTA-1.4 Action routing and destructive gating."""
+"""CONCEPT:OK-OS.governance.okta-2 / CONCEPT:OK-OS.identity.default Action routing and destructive gating."""
 
 import httpx
 import pytest
@@ -28,7 +28,7 @@ def mock_client(monkeypatch):
     return recorder
 
 
-@pytest.mark.concept("OKTA-1.4")
+@pytest.mark.concept("OK-OS.identity.default")
 class TestDestructiveGating:
     async def test_destructive_blocked_by_default(self, mock_client):
         result = await mcp_users.run_users("deactivate", '{"user_id": "u1"}')
@@ -86,7 +86,7 @@ class TestDestructiveGating:
         assert "error" not in result
 
 
-@pytest.mark.concept("OKTA-1.3")
+@pytest.mark.concept("OK-OS.governance.okta-2")
 class TestActionRouting:
     async def test_users_list_routes(self, mock_client):
         def list_handler(request):
@@ -151,7 +151,7 @@ class TestActionRouting:
         assert mock_client.last.url.params["limit"] == "1000"
 
 
-@pytest.mark.concept("OKTA-1.3")
+@pytest.mark.concept("OK-OS.governance.okta-2")
 class TestToolRegistration:
     async def test_all_five_tools_register(self):
         from okta_agent.mcp import (
