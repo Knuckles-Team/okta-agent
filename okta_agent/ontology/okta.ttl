@@ -1,0 +1,159 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix : <http://knuckles.team/kg#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Okta CIAM/SSO ontology — identities, groups, applications and access policy. All classes
+# and properties live in the shared `:` (kg#) namespace; only the owl:Ontology node gets the
+# per-package IRI. Backs the okta-agent MCP tool surface (okta_users / okta_groups / okta_apps
+# / okta_policies / okta_system).
+
+# --- classes (owl:Class) ---
+
+:User a owl:Class ;
+    rdfs:label "Okta User" ;
+    rdfs:comment "An Okta identity with a lifecycle status and profile (okta_users). A specialization of :Person." ;
+    rdfs:subClassOf :Person .
+
+:Group a owl:Class ;
+    rdfs:label "Okta Group" ;
+    rdfs:comment "A collection of users used for access assignment (okta_groups). Type may be OKTA_GROUP, APP_GROUP, or BUILT_IN." .
+
+:Application a owl:Class ;
+    rdfs:label "Okta Application" ;
+    rdfs:comment "An SSO/OIDC/SAML application integration users and groups are assigned to (okta_apps)." .
+
+:GroupRule a owl:Class ;
+    rdfs:label "Group Rule" ;
+    rdfs:comment "A dynamic-membership rule that assigns users to a Group from an Okta Expression Language condition (okta_groups action=list_rules)." .
+
+:Policy a owl:Class ;
+    rdfs:label "Access Policy" ;
+    rdfs:comment "An Okta policy governing sign-on, password, or MFA enrollment (okta_policies). Carries a type and priority." .
+
+:Factor a owl:Class ;
+    rdfs:label "MFA Factor" ;
+    rdfs:comment "An enrolled multi-factor authentication method for a user (okta_users action=list_factors)." .
+
+:LogEvent a owl:Class ;
+    rdfs:label "System Log Event" ;
+    rdfs:comment "An audit event emitted by the Okta System Log describing an actor, target, and outcome (okta_system)." .
+
+# --- links (owl:ObjectProperty) ---
+
+:memberOfGroup a owl:ObjectProperty ;
+    rdfs:label "member of group" ;
+    rdfs:comment "Links a User to a Group it belongs to." ;
+    rdfs:domain :User ;
+    rdfs:range :Group .
+
+:assignedToApp a owl:ObjectProperty ;
+    rdfs:label "assigned to app" ;
+    rdfs:comment "Links a User or Group to an Application it is assigned to." ;
+    rdfs:range :Application .
+
+:hasFactor a owl:ObjectProperty ;
+    rdfs:label "has factor" ;
+    rdfs:comment "Links a User to an enrolled MFA Factor." ;
+    rdfs:domain :User ;
+    rdfs:range :Factor .
+
+:governedByRule a owl:ObjectProperty ;
+    rdfs:label "governed by rule" ;
+    rdfs:comment "Links a Group to a GroupRule that populates it dynamically." ;
+    rdfs:domain :Group ;
+    rdfs:range :GroupRule .
+
+:appliesToApp a owl:ObjectProperty ;
+    rdfs:label "applies to app" ;
+    rdfs:comment "Links a Policy to the Application whose access it governs." ;
+    rdfs:domain :Policy ;
+    rdfs:range :Application .
+
+:targetsUser a owl:ObjectProperty ;
+    rdfs:label "targets user" ;
+    rdfs:comment "Links a LogEvent to the User it acted on." ;
+    rdfs:domain :LogEvent ;
+    rdfs:range :User .
+
+# --- fields (owl:DatatypeProperty) ---
+
+:status a owl:DatatypeProperty ;
+    rdfs:label "status" ;
+    rdfs:comment "Okta lifecycle status (STAGED, PROVISIONED, ACTIVE, SUSPENDED, LOCKED_OUT, DEPROVISIONED) for a User, or ACTIVE/INACTIVE for an Application/Policy/GroupRule." ;
+    rdfs:range xsd:string .
+
+:login a owl:DatatypeProperty ;
+    rdfs:label "login" ;
+    rdfs:comment "A User's unique Okta login (typically an email address)." ;
+    rdfs:domain :User ;
+    rdfs:range xsd:string .
+
+:email a owl:DatatypeProperty ;
+    rdfs:label "email" ;
+    rdfs:comment "Primary email address on a User's profile." ;
+    rdfs:domain :User ;
+    rdfs:range xsd:string .
+
+:groupType a owl:DatatypeProperty ;
+    rdfs:label "group type" ;
+    rdfs:comment "Okta Group type: OKTA_GROUP, APP_GROUP, or BUILT_IN." ;
+    rdfs:domain :Group ;
+    rdfs:range xsd:string .
+
+:signOnMode a owl:DatatypeProperty ;
+    rdfs:label "sign-on mode" ;
+    rdfs:comment "An Application's SSO mode (SAML_2_0, OPENID_CONNECT, SECURE_PASSWORD_STORE, BOOKMARK, …)." ;
+    rdfs:domain :Application ;
+    rdfs:range xsd:string .
+
+:policyType a owl:DatatypeProperty ;
+    rdfs:label "policy type" ;
+    rdfs:comment "Okta Policy type (OKTA_SIGN_ON, PASSWORD, MFA_ENROLL, ACCESS_POLICY, …)." ;
+    rdfs:domain :Policy ;
+    rdfs:range xsd:string .
+
+:priority a owl:DatatypeProperty ;
+    rdfs:label "priority" ;
+    rdfs:comment "Evaluation priority of a Policy or GroupRule (lower is evaluated first)." ;
+    rdfs:range xsd:integer .
+
+:factorType a owl:DatatypeProperty ;
+    rdfs:label "factor type" ;
+    rdfs:comment "MFA Factor type (okta_verify, sms, call, email, webauthn, google_otp, …)." ;
+    rdfs:domain :Factor ;
+    rdfs:range xsd:string .
+
+:provider a owl:DatatypeProperty ;
+    rdfs:label "provider" ;
+    rdfs:comment "MFA Factor provider (OKTA, GOOGLE, FIDO, YUBICO, …)." ;
+    rdfs:domain :Factor ;
+    rdfs:range xsd:string .
+
+:eventType a owl:DatatypeProperty ;
+    rdfs:label "event type" ;
+    rdfs:comment "System Log event type (e.g. user.session.start, user.lifecycle.deactivate)." ;
+    rdfs:domain :LogEvent ;
+    rdfs:range xsd:string .
+
+:outcome a owl:DatatypeProperty ;
+    rdfs:label "outcome" ;
+    rdfs:comment "Result of a System Log event (SUCCESS, FAILURE, …)." ;
+    rdfs:domain :LogEvent ;
+    rdfs:range xsd:string .
+
+:externalToolId a owl:DatatypeProperty ;
+    rdfs:label "external tool id" ;
+    rdfs:comment "The native Okta object id this node mirrors." ;
+    rdfs:range xsd:string .
+
+<http://knuckles.team/kg/okta> a owl:Ontology ;
+    rdfs:label "Okta CIAM/SSO Ontology" ;
+    rdfs:comment """Okta enterprise identity model — users, groups, applications, group
+    rules, access policies, MFA factors and system-log events, with their membership,
+    assignment and governance relationships — federated into the agent-utilities
+    knowledge-graph hub.""" ;
+    owl:imports <http://knuckles.team/kg> .

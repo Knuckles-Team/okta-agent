@@ -17,6 +17,7 @@ from okta_agent.auth import get_client
 from okta_agent.mcp import (
     register_apps_tools,
     register_groups_tools,
+    register_ingest_tools,
     register_policies_tools,
     register_system_tools,
     register_users_tools,
@@ -27,6 +28,7 @@ from okta_agent.mcp import (
 __all__ = [
     "register_apps_tools",
     "register_groups_tools",
+    "register_ingest_tools",
     "register_policies_tools",
     "register_system_tools",
     "register_users_tools",

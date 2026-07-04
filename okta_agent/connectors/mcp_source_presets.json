@@ -1,0 +1,36 @@
+{
+  "_comment": "Tier-1 mcp_tool source presets for okta-agent (AU-KG.ingest.mcp-tool-connector). Each entry drives source_sync via the named MCP tool: it calls tool(action, params_json) and maps records_path -> typed :Class nodes. Contributed presets win over the central MCP_TOOL_PRESETS.",
+  "okta-users": {
+    "server": "okta-agent",
+    "tool": "okta_users",
+    "action": "list",
+    "records_path": "data",
+    "id_field": "id",
+    "title_field": "profile.login",
+    "text_field": "profile.email",
+    "updated_field": "lastUpdated",
+    "doc_type": "User"
+  },
+  "okta-groups": {
+    "server": "okta-agent",
+    "tool": "okta_groups",
+    "action": "list",
+    "records_path": "data",
+    "id_field": "id",
+    "title_field": "profile.name",
+    "text_field": "profile.description",
+    "updated_field": "lastUpdated",
+    "doc_type": "Group"
+  },
+  "okta-apps": {
+    "server": "okta-agent",
+    "tool": "okta_apps",
+    "action": "list",
+    "records_path": "data",
+    "id_field": "id",
+    "title_field": "label",
+    "text_field": "signOnMode",
+    "updated_field": "lastUpdated",
+    "doc_type": "Application"
+  }
+}
