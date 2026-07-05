@@ -675,7 +675,7 @@
 <h1 id="concept-registry-okta-mcp">Concept Registry — Okta MCP<a class="headerlink" href="#concept-registry-okta-mcp" title="Permanent link">&para;</a></h1>
 <blockquote>
 <p><strong>Prefix</strong>: <code>CONCEPT:OKTA-*</code>
-<strong>Bridge</strong>: <code>CONCEPT:ECO-4.0</code> (Unified Toolkit Ingestion)</p>
+<strong>Bridge</strong>: <code>CONCEPT:AU-ECO.messaging.native-backend-abstraction</code> (Unified Toolkit Ingestion)</p>
 </blockquote>
 <h2 id="project-specific-concepts">Project-Specific Concepts<a class="headerlink" href="#project-specific-concepts" title="Permanent link">&para;</a></h2>
 <table>
@@ -688,32 +688,32 @@
 </thead>
 <tbody>
 <tr>
-<td><code>CONCEPT:OKTA-1.1</code></td>
+<td><code>CONCEPT:OK-OS.governance.okta</code></td>
 <td>Core API Client Operations</td>
 <td>Raw httpx client for the Okta Management API — rate-limit header tracking, capped 429 backoff, Link-header cursor pagination, error-envelope mapping</td>
 </tr>
 <tr>
-<td><code>CONCEPT:OKTA-1.2</code></td>
+<td><code>CONCEPT:OK-OS.identity.okta</code></td>
 <td>Credential Strategies</td>
 <td>SSWS API token and OAuth2 private-key-JWT (org authorization server, Okta API scopes) credential loading and rotation</td>
 </tr>
 <tr>
-<td><code>CONCEPT:OKTA-1.3</code></td>
+<td><code>CONCEPT:OK-OS.governance.okta-2</code></td>
 <td>FastMCP Tools Execution</td>
 <td>Action-routed MCP tools (users/groups/apps/policies/system) as thin shims over the API client</td>
 </tr>
 <tr>
-<td><code>CONCEPT:OKTA-1.4</code></td>
+<td><code>CONCEPT:OK-OS.identity.default</code></td>
 <td>Safety Gating &amp; Redaction</td>
 <td>Destructive operations blocked behind <code>allow_destructive</code> (default false); credential material redacted from logs and error envelopes</td>
 </tr>
 <tr>
-<td><code>CONCEPT:OKTA-1.5</code></td>
+<td><code>CONCEPT:OK-OS.governance.okta-3</code></td>
 <td>SCIM Filter Building</td>
 <td>Structured, escaped construction of Okta's SCIM-style <code>filter</code> expressions</td>
 </tr>
 <tr>
-<td><code>CONCEPT:ECO-4.0</code></td>
+<td><code>CONCEPT:AU-ECO.messaging.native-backend-abstraction</code></td>
 <td>Ecosystem Compliance</td>
 <td>Multi-package integration compliance standard</td>
 </tr>
