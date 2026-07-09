@@ -1,5 +1,6 @@
 ---
 name: okta-access-management
+skill_type: skill
 description: >-
   Okta group and application access administration via the okta-agent MCP server
   — manage groups and their membership, dynamic group rules (Okta Expression

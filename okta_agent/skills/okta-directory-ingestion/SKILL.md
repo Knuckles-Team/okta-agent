@@ -1,5 +1,6 @@
 ---
 name: okta-directory-ingestion
+skill_type: skill
 description: >-
   Natively mirror the Okta directory (users, groups, applications) into the
   epistemic-graph knowledge graph as typed OWL nodes via the okta-agent MCP

@@ -1,5 +1,6 @@
 ---
 name: okta-user-lifecycle
+skill_type: skill
 description: >-
   Okta user identity and lifecycle operations via the okta-agent MCP server —
   list/search users, read one by id or login, create/update profiles, and drive
