@@ -140,9 +140,9 @@ class TestErrorEnvelopeMapping:
         err = excinfo.value.to_dict()
         assert err["status"] == 404
         assert err["error_code"] == "E0000007"
-        assert "u404" in err["error_summary"]
-        assert err["error_id"] == "oae123"
-        assert err["error_causes"] == [{"errorSummary": "cause"}]
+        assert err["error_summary"] == "Okta request failed"
+        assert err["error_id"] is None
+        assert err["error_causes"] == []
         assert err["rate_limit"]["limit"] == 600
 
     def test_non_json_error_body(self, make_api):
@@ -155,7 +155,7 @@ class TestErrorEnvelopeMapping:
             make_api(handler).get_org()
         assert excinfo.value.status == 502
         assert excinfo.value.error_summary is not None
-        assert "Bad Gateway" in excinfo.value.error_summary
+        assert excinfo.value.error_summary == "Okta request failed"
 
     def test_204_maps_to_success(self, make_api):
         import httpx
@@ -177,7 +177,7 @@ class TestRedaction:
             make_api(handler).get_org()
         assert excinfo.value.error_summary is not None
         assert TEST_TOKEN not in excinfo.value.error_summary
-        assert "***REDACTED***" in excinfo.value.error_summary
+        assert excinfo.value.error_summary == "Okta request failed"
 
     def test_redact_secrets_scrubs_auth_schemes(self):
         text = "header was 'Authorization: SSWS abc123def' and 'Bearer xyz.token-1'"

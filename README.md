@@ -61,25 +61,22 @@ graph TD
 
 ## Installation
 
-> **Install the slim `[mcp]` extra.** For MCP-server hosting (including `uvx` /
-> container deploys), install `okta-agent[mcp]` — the MCP-server extra that pulls
-> only the FastMCP / FastAPI tooling (`agent-utilities[mcp]`). It deliberately
-> **excludes** the heavy agent runtime (the epistemic-graph engine, `pydantic-ai`,
-> `dspy`, `llama-index`, `tree-sitter`), so installs are dramatically smaller and
-> faster. Use the full `[agent]` extra only when you need the integrated Pydantic
-> AI agent.
+> **Install the connector-focused `[mcp]` extra.** Examples use `okta-agent[mcp]` to add
+> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
+> still carries `epistemic-graph[full]`. The `[agent]` extra additionally
+> enables model orchestration.
 
 Pick the extra that matches what you want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `okta-agent[mcp]` | Slim MCP server only (`agent-utilities[mcp]` — FastMCP/FastAPI) | You only run the **MCP server** (smallest install / image) |
-| `okta-agent[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | You run the **integrated A2A agent** |
+| `okta-agent[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You only run the **MCP server** (smallest install / image) |
+| `okta-agent[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated A2A agent** |
 | `okta-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
 pip install okta-agent            # core API client
-pip install okta-agent[mcp]       # slim MCP server (FastMCP/FastAPI)
+pip install okta-agent[mcp]       # connector-focused MCP server (FastMCP/FastAPI)
 pip install okta-agent[agent]     # full A2A agent runtime + epistemic-graph engine
 pip install okta-agent[all]       # everything (development)
 ```
@@ -90,26 +87,27 @@ One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
-| `knucklessg1/okta-agent:mcp` | `--target mcp` | `okta-agent[mcp]` — **slim**, no engine/`pydantic-ai`/`dspy`/`llama-index`/`tree-sitter` | `okta-mcp` |
-| `knucklessg1/okta-agent:latest` | `--target agent` (default) | `okta-agent[agent]` — **full** agent runtime + epistemic-graph engine | `okta-agent` |
+| `example/okta-agent:mcp` | `--target mcp` | `okta-agent[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `okta-mcp` |
+| `example/okta-agent@sha256:<digest>` | `--target agent` (default) | `okta-agent[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `okta-agent` |
 
 ```bash
-docker build --target mcp   -t knucklessg1/okta-agent:mcp    docker/   # slim MCP server
-docker build --target agent -t knucklessg1/okta-agent:latest docker/   # full agent
+docker build --target mcp   -t example/okta-agent:mcp    docker/   # connector-focused MCP server
+docker build --target agent -t example/okta-agent:agent-local docker/   # agent runtime
 ```
 
-`docker/mcp.compose.yml` runs the slim `:mcp` server; `docker/agent.compose.yml` runs the
-agent (`:latest`) with a co-located `:mcp` sidecar.
+`docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/agent.compose.yml` runs the
+agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-The **full agent** (`[agent]` / `:latest`) embeds the **epistemic-graph** engine (pulled in
-transitively via `agent-utilities[agent]`). For production — or to share one knowledge graph
-across multiple agents — run **epistemic-graph as its own database container** and point the
-agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
-config, and the full database architecture (with diagrams) are documented in the
+Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
+Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
+the server connector-focused; `[agent]` additionally enables model orchestration. Local
+deployments can use the bundled engine. For production or shared state, run
+**epistemic-graph as a dedicated database service** and configure the runtime to use it.
+Deployment recipes (single-node + Raft HA), connection configuration, and architecture
+diagrams are documented in the
 [epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
-The slim `[mcp]` server does **not** require the database.
 
 ## Configure
 
@@ -125,7 +123,7 @@ export OKTA_PRIVATE_KEY_FILE="/path/to/key.pem"   # or OKTA_PRIVATE_KEY inline
 export OKTA_SCOPES="okta.users.read okta.groups.manage"
 ```
 
-See `.env.example` for every knob (`OKTA_SSL_VERIFY`, `OKTA_MAX_RETRIES`,
+See `.env.example` for every knob (`OKTA_TLS_PROFILE`, `OKTA_MAX_RETRIES`,
 `OKTA_BACKOFF_CAP_SECONDS`, `OKTA_ALLOW_DESTRUCTIVE`, per-tool switches).
 
 ## Environment Variables
@@ -141,24 +139,25 @@ See `.env.example` for every knob (`OKTA_SSL_VERIFY`, `OKTA_MAX_RETRIES`,
 | `TRANSPORT` | `stdio` | options: stdio, streamable-http, sse |
 | `ENABLE_OTEL` | `True` |  |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:8080/api/public/otel` |  |
-| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | `pk-...` |  |
-| `OTEL_EXPORTER_OTLP_SECRET_KEY` | `sk-...` |  |
+| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | secret-injected |  |
+| `OTEL_EXPORTER_OTLP_SECRET_KEY` | secret-injected |  |
 | `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |  |
 | `EUNOMIA_TYPE` | `none` | options: none, embedded, remote |
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
 | `EUNOMIA_REMOTE_URL` | `http://eunomia-server:8000` |  |
 | `OKTA_ORG_URL` | `https://acme.okta.com` | Okta org URL (no trailing slash), e.g. https://acme.okta.com |
 | `OKTA_AGENT_BASE_URL` | — | Accepted as a fallback for OKTA_ORG_URL when that is unset |
-| `OKTA_API_TOKEN` | — |  |
+| `OKTA_API_TOKEN` | secret-injected |  |
 | `OKTA_CLIENT_ID` | — | Service-app client id (org authorization server, client_credentials grant) |
-| `OKTA_PRIVATE_KEY` | — | PEM private key inline, or a path to a PEM file |
-| `OKTA_PRIVATE_KEY_FILE` | — |  |
-| `OKTA_KEY_ID` | — | Optional JWKS key id for the client assertion header |
+| `OKTA_PRIVATE_KEY` | secret-injected | PEM private key inline, or a path to a PEM file |
+| `OKTA_PRIVATE_KEY_FILE` | secret-injected |  |
+| `OKTA_KEY_ID` | secret-injected | Optional JWKS key id for the client assertion header |
 | `OKTA_SCOPES` | `okta.users.read okta.groups.read okta.apps.read` | Space-separated Okta API scopes |
-| `OKTA_SSL_VERIFY` | `True` | TLS verification toward the org |
+| `OKTA_TLS_PROFILE` | `system` | Named outbound TLS policy. Configure profiles in AgentConfig; a reference may resolve runtime trust material without persisting certificate paths here. |
+| `OKTA_TLS_PROFILE_REF` | — |  |
 | `OKTA_MAX_RETRIES` | `2` | 429 handling: retry attempts and backoff cap (seconds) |
 | `OKTA_BACKOFF_CAP_SECONDS` | `60` |  |
-| `OKTA_ALLOW_DESTRUCTIVE` | `False` | allow_destructive=true also works; default is blocked. |
+| `OKTA_ALLOW_DESTRUCTIVE` | `False` | Safety: org-wide default for destructive tool actions (deactivate/delete/clear-sessions/password ops). Per-call allow_destructive=true also works; default is blocked. |
 | `USERSTOOL` | `True` | Tool registration switches |
 | `GROUPSTOOL` | `True` |  |
 | `APPSTOOL` | `True` |  |
@@ -169,14 +168,16 @@ See `.env.example` for every knob (`OKTA_SSL_VERIFY`, `OKTA_MAX_RETRIES`,
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `MCP_TOOL_MODE` | `condensed` | Tool surface: `condensed` | `verbose` | `both` |
+| `MCP_TOOL_MODE` | `intent` | Tool surface: `intent` \| `condensed` \| `verbose` \| `both` |
 | `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
 | `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
 | `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
 | `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
-| `MCP_CLIENT_AUTH` | — | Outbound MCP auth (`oidc-client-credentials` for fleet calls) |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
 | `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
-| `OIDC_CLIENT_SECRET` | — | OIDC client secret (service-account auth) |
+| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
+| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
+| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
 | `DEBUG` | `False` | Verbose logging |
 | `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
@@ -184,7 +185,7 @@ See `.env.example` for every knob (`OKTA_SSL_VERIFY`, `OKTA_MAX_RETRIES`,
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_28 package + 14 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_29 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -196,7 +197,7 @@ _28 package + 14 inherited variable(s). Auto-generated from `.env.example` + the
 | `OKTA_PRIVATE_KEY` / `OKTA_PRIVATE_KEY_FILE` | — | PEM private key inline or path |
 | `OKTA_KEY_ID` | — | Optional JWKS key id for the client assertion |
 | `OKTA_SCOPES` | read scopes | Space-separated Okta API scopes |
-| `OKTA_SSL_VERIFY` | `True` | TLS verification toward the org |
+| `OKTA_TLS_PROFILE` | `system` | Named outbound TLS policy from AgentConfig |
 | `OKTA_MAX_RETRIES` | `2` | 429 retry attempts |
 | `OKTA_BACKOFF_CAP_SECONDS` | `60` | 429 backoff cap |
 | `OKTA_ALLOW_DESTRUCTIVE` | `False` | Org-wide default for destructive tool actions |
@@ -355,7 +356,7 @@ docker compose -f docker/agent.compose.yml up -d
 
 The A2A agent server (`okta-agent` console script, `agent_server.py`) reads
 `MCP_URL`, `PROVIDER`, and `MODEL_ID` from the environment. Prebuilt images:
-`knucklessg1/okta-agent:mcp` (slim MCP server) and `knucklessg1/okta-agent:latest`
+`example/okta-agent:mcp` (MCP server) and `example/okta-agent@sha256:<digest>`
 (full agent) — see [Container images](#container-images-mcp-vs-agent). See
 [docs/deployment.md](docs/deployment.md) for transports, reverse proxy, and DNS
 guidance.
@@ -363,16 +364,16 @@ guidance.
 <!-- BEGIN GENERATED: additional-deployment-options -->
 ### Additional Deployment Options
 
-`okta-agent` can also run as a **local container** (Docker / Podman / `uv`) or be
-consumed from a **remote deployment**. The
-[Deployment guide](https://knuckles-team.github.io/okta-agent/deployment/) has full, copy-paste
-`mcp_config.json` for all four transports — **stdio**, **streamable-http**,
-**local container / uv**, and **remote URL**:
+`okta-agent` can run as a local stdio process or container, or behind a remote
+network boundary. The
+[Deployment guide](https://knuckles-team.github.io/okta-agent/deployment/) carries
+the detailed transport contract.
 
-- **Local container / uv** — launch the server from `mcp_config.json` via `uvx`,
-  `docker run`, or `podman run`, or point at a local streamable-http container by `url`.
-- **Remote URL** — connect to a server deployed behind Caddy at
-  `http://okta-mcp.arpa/mcp` using the `"url"` key.
+- **Local container** — launch a reviewed immutable image as a least-privilege
+  stdio child with no listener or published port.
+- **Remote URL** — connect through an operator-supplied authenticated HTTPS
+  ingress. Keep its URL, outbound identity references, trust profile, and exact
+  `MCP_ALLOWED_HOSTS` in `AgentConfig`.
 <!-- END GENERATED: additional-deployment-options -->
 
 ## Keycloak parity
@@ -405,23 +406,40 @@ API references are cited in every client docstring
 (https://developer.okta.com/docs/api/).
 
 
-<!-- BEGIN agent-os-genesis-deploy (generated; do not edit between markers) -->
+<!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
 
-## Deploy with `agent-os-genesis`
+## Deploy with `agent-utilities-deployment`
 
-This package can be provisioned for you — skill-guided — by the **`agent-os-genesis`**
-universal skill (its *single-package deploy mode*): it picks your install method, seeds
-secrets to OpenBao/Vault (or `.env`), trusts your enterprise CA, registers the MCP
-server, and verifies it — the same machinery that stands up the whole Agent OS, narrowed
-to just this package. Ask your agent to **"deploy `okta-agent` with agent-os-genesis"**.
+Provision this package with the consolidated **`agent-utilities-deployment`**
+workflow. It selects an installed-package, editable-source, or immutable-container
+path; records only runtime secret and TLS-profile references in `AgentConfig`; and
+runs doctor, registration, policy, observability, and rollback gates. Ask your agent
+to **"deploy `okta-agent` with agent-utilities-deployment"**.
 
 | Install mode | Command |
 |------|---------|
-| Bare-metal, prod (PyPI) | `uvx okta-mcp` · or `uv tool install okta-agent` |
-| Bare-metal, dev (editable) | `uv pip install -e ".[all]"` · or `pip install -e ".[all]"` |
-| Container, prod | deploy `knucklessg1/okta-agent:latest` via docker-compose / swarm / podman / podman-compose / kubernetes |
-| Container, dev (editable) | deploy `docker/compose.dev.yml` (source-mounted at `/src`; edits live on restart) |
+| Installed package | `uv tool install "okta-agent[mcp]"`, then run `okta-mcp` |
+| Editable source | `uv pip install -e ".[agent]"`, then run `okta-mcp` |
+| Immutable container | deploy `registry.example.invalid/okta-agent@sha256:<digest>` through the operator-selected orchestrator |
 
-Secrets are read-existing + seeded via `vault_sync` — you are only prompted for what's missing.
+The repository embeds no deployment profile, credential value, certificate path, or
+environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
+configured secret provider.
 
-<!-- END agent-os-genesis-deploy -->
+<!-- END agent-utilities-deployment -->
+
+<!-- GOVERNED-CAPABILITY:START -->
+## Governed capability contract
+
+This package ships a compact canonical skill surface with specialist procedures
+kept as referenced workflows. The current MCP tools, skill metadata,
+`connector_manifest.yml`, ontology, mappings, shapes, fixtures, migrations,
+tool-schema fingerprints, and certification metadata form one versioned
+capability contract. Validate them together; do not rely on stale tool names or
+historical per-task skill wrappers.
+
+Runtime endpoints, credentials, certificate trust, tenant identity, retention,
+and observability policy are deployment inputs and are never packaged values.
+See [Configuration, trust, and privacy](docs/configuration.md) before enabling a
+network transport, connector ingestion, GraphOS delegation, or trace export.
+<!-- GOVERNED-CAPABILITY:END -->

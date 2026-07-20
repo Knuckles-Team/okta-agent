@@ -7,20 +7,15 @@
         "okta-mcp"
       ],
       "env": {
-        "MCP_TOOL_MODE": "condensed",
+        "MCP_TOOL_MODE": "intent",
         "APPSTOOL": "True",
         "GROUPSTOOL": "True",
-        "OKTA_AGENT_BASE_URL": "",
         "OKTA_ALLOW_DESTRUCTIVE": "False",
-        "OKTA_API_TOKEN": "",
         "OKTA_BACKOFF_CAP_SECONDS": "60",
-        "OKTA_CLIENT_ID": "",
-        "OKTA_KEY_ID": "",
         "OKTA_MAX_RETRIES": "2",
         "OKTA_ORG_URL": "https://acme.okta.com",
-        "OKTA_PRIVATE_KEY": "",
-        "OKTA_PRIVATE_KEY_FILE": "",
         "OKTA_SCOPES": "okta.users.read okta.groups.read okta.apps.read",
+        "OKTA_TLS_PROFILE": "system",
         "POLICIESTOOL": "True",
         "SYSTEMTOOL": "True",
         "USERSTOOL": "True"

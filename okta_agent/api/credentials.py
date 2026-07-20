@@ -21,6 +21,10 @@ import uuid
 import httpx
 import jwt
 from agent_utilities.base_utilities import get_logger
+from agent_utilities.core.transport_security import (
+    ResolvedTLSProfile,
+    resolve_configured_tls_profile,
+)
 
 logger = get_logger(__name__)
 
@@ -77,7 +81,7 @@ class PrivateKeyJwt:
         private_key_pem: str,
         scopes: list[str],
         kid: str | None = None,
-        verify: bool = True,
+        tls_profile: ResolvedTLSProfile | None = None,
         transport: httpx.BaseTransport | None = None,
     ):
         self.org_url = org_url.rstrip("/")
@@ -87,7 +91,12 @@ class PrivateKeyJwt:
         self.kid = kid
         self._access_token: str | None = None
         self._expires_at: float = 0.0
-        self._http = httpx.Client(verify=verify, transport=transport, timeout=30.0)
+        self.tls_profile = tls_profile or resolve_configured_tls_profile("okta")
+        self._http = httpx.Client(
+            transport=transport,
+            timeout=30.0,
+            **self.tls_profile.httpx_kwargs(),
+        )
 
     @property
     def token_url(self) -> str:

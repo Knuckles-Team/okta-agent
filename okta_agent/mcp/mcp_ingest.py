@@ -34,7 +34,7 @@ async def run_ingest(action: str, params_json: str = "{}") -> Any:
     try:
         p = parse_params(params_json)
     except ValueError as exc:
-        return {"error": {"message": f"Invalid params_json: {exc}"}}
+        return {"error": {"message": f"Invalid params_json: {type(exc).__name__}"}}
 
     limit = p.get("limit", 200)
     max_items = p.get("max_items", 1000)

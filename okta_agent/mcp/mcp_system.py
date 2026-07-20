@@ -19,7 +19,7 @@ async def run_system(action: str, params_json: str = "{}") -> Any:
     try:
         p = parse_params(params_json)
     except ValueError as exc:
-        return {"error": {"message": f"Invalid params_json: {exc}"}}
+        return {"error": {"message": f"Invalid params_json: {type(exc).__name__}"}}
 
     client = get_client()
     if action == "org":

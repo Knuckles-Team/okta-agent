@@ -12,7 +12,8 @@ environment. Two auth modes (in precedence order):
    (https://developer.okta.com/docs/guides/implement-oauth-for-okta/main/)
 
 Other knobs: ``OKTA_ORG_URL`` (e.g. ``https://acme.okta.com``),
-``OKTA_SSL_VERIFY``, ``OKTA_MAX_RETRIES`` and ``OKTA_BACKOFF_CAP_SECONDS``
+``OKTA_TLS_PROFILE`` / ``OKTA_TLS_PROFILE_REF``, ``OKTA_MAX_RETRIES`` and
+``OKTA_BACKOFF_CAP_SECONDS``
 (429 backoff), and ``OKTA_ALLOW_DESTRUCTIVE`` (CONCEPT:OK-OS.identity.default — default
 gate for destructive tool actions, see :mod:`okta_agent.mcp`).
 """
@@ -21,6 +22,7 @@ import os
 
 from agent_utilities.base_utilities import get_logger
 from agent_utilities.core.config import setting
+from agent_utilities.core.transport_security import resolve_configured_tls_profile
 
 from okta_agent.api.api_client_base import (
     DEFAULT_BACKOFF_CAP,
@@ -53,7 +55,11 @@ def get_client() -> Api:
         # Default fallback for testing
         org_url = "https://localhost"
 
-    verify = setting("OKTA_SSL_VERIFY", True)
+    tls_profile = resolve_configured_tls_profile(
+        "okta",
+        profile_name=setting("OKTA_TLS_PROFILE", "") or None,
+        profile_ref=setting("OKTA_TLS_PROFILE_REF", "") or None,
+    )
     max_retries = setting("OKTA_MAX_RETRIES", DEFAULT_MAX_RETRIES)
     backoff_cap = setting("OKTA_BACKOFF_CAP_SECONDS", DEFAULT_BACKOFF_CAP)
 
@@ -71,7 +77,7 @@ def get_client() -> Api:
             private_key_pem=private_key,
             scopes=setting("OKTA_SCOPES", DEFAULT_SCOPES).split(),
             kid=setting("OKTA_KEY_ID", "") or None,
-            verify=verify,
+            tls_profile=tls_profile,
         )
     else:
         logger.warning(
@@ -84,7 +90,7 @@ def get_client() -> Api:
     return Api(
         org_url=org_url,
         credential=credential,
-        verify=verify,
+        tls_profile=tls_profile,
         max_retries=max_retries,
         backoff_cap=backoff_cap,
     )

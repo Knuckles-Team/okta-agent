@@ -1,0 +1,4 @@
+interface:
+  display_name: "Okta Agent Operations"
+  short_description: "Help with Okta Agent Operations tasks"
+  default_prompt: "Use $okta-agent-operations to complete a governed provider workflow."

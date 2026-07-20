@@ -24,7 +24,7 @@ async def run_groups(
     try:
         p = parse_params(params_json)
     except ValueError as exc:
-        return {"error": {"message": f"Invalid params_json: {exc}"}}
+        return {"error": {"message": f"Invalid params_json: {type(exc).__name__}"}}
 
     blocked = destructive_blocked(action, DESTRUCTIVE_GROUP_ACTIONS, allow_destructive)
     if blocked:

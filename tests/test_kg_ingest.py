@@ -8,6 +8,9 @@ CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 
 from __future__ import annotations
 
+import pytest
+from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
+
 from okta_agent.kg_ingest import (
     ingest_apps,
     ingest_entities,
@@ -19,6 +22,7 @@ from okta_agent.kg_ingest import (
 class _FakeTxn:
     def __init__(self):
         self.nodes = {}
+        self.edges = []
         self.committed = False
 
     def begin(self, graph=None):
@@ -28,33 +32,27 @@ class _FakeTxn:
     def add_node(self, txn, node_id, props):
         self.nodes[node_id] = props
 
+    def add_edge(self, txn, source, target, props):
+        self.edges.append((source, target, props))
+
     def commit(self, txn):
         self.committed = True
         return True
 
 
-class _FakeEdges:
-    def __init__(self):
-        self.edges = []
-
-    def add(self, src, dst, props):
-        self.edges.append((src, dst, props))
-
-
 class _FakeClient:
     def __init__(self):
         self.txn = _FakeTxn()
-        self.edges = _FakeEdges()
 
 
 def test_ingest_entities_writes_nodes_and_edges():
     c = _FakeClient()
     res = ingest_entities(
         [
-            {"id": "a", "type": "User", "name": "Ada"},
-            {"id": "b", "type": "Group"},
+            {"id": "a", "node_type": "User", "name": "Ada"},
+            {"id": "b", "node_type": "Group"},
         ],
-        [{"source": "a", "target": "b", "type": "memberOfGroup"}],
+        [{"source": "a", "target": "b", "relationship": "memberOfGroup"}],
         client=c,
         graph="__commons__",
     )
@@ -64,7 +62,7 @@ def test_ingest_entities_writes_nodes_and_edges():
     # provenance is stamped
     assert c.txn.nodes["a"]["source"] == "okta-agent"
     assert c.txn.nodes["a"]["domain"] == "okta"
-    assert c.edges.edges == [("a", "b", {"type": "memberOfGroup"})]
+    assert c.txn.edges == [("a", "b", {"relationship": "memberOfGroup"})]
 
 
 def test_ingest_users_maps_user_and_group_edge():
@@ -88,13 +86,13 @@ def test_ingest_users_maps_user_and_group_edge():
     )
     assert res == {"nodes": 1, "edges": 1}
     node = c.txn.nodes["okta:user:00u1"]
-    assert node["type"] == "User"
+    assert node["node_type"] == "User"
     assert node["name"] == "Ada Lovelace"
     assert node["login"] == "ada@acme.com"
     assert node["status"] == "ACTIVE"
     assert node["externalToolId"] == "00u1"
-    assert c.edges.edges == [
-        ("okta:user:00u1", "okta:group:00g9", {"type": "memberOfGroup"})
+    assert c.txn.edges == [
+        ("okta:user:00u1", "okta:group:00g9", {"relationship": "memberOfGroup"})
     ]
 
 
@@ -113,7 +111,7 @@ def test_ingest_groups_maps_group():
     )
     assert res == {"nodes": 1, "edges": 0}
     node = c.txn.nodes["okta:group:00g9"]
-    assert node["type"] == "Group"
+    assert node["node_type"] == "Group"
     assert node["name"] == "Engineering"
     assert node["groupType"] == "OKTA_GROUP"
     assert node["externalToolId"] == "00g9"
@@ -135,19 +133,17 @@ def test_ingest_apps_maps_application():
     )
     assert res == {"nodes": 1, "edges": 0}
     node = c.txn.nodes["okta:app:0oa5"]
-    assert node["type"] == "Application"
+    assert node["node_type"] == "Application"
     assert node["name"] == "Salesforce"
     assert node["signOnMode"] == "SAML_2_0"
     assert node["externalToolId"] == "0oa5"
 
 
-def test_ingest_noops_without_engine():
-    # No injected client + no reachable engine -> clean no-op.
-    assert ingest_entities([{"id": "a", "type": "User"}]) is None
+def test_retired_structural_alias_is_rejected():
+    with pytest.raises(NativeIngestError, match="canonical node_type"):
+        ingest_entities([{"id": "a", "type": "User"}], client=_FakeClient())
 
 
-def test_ingest_empty_is_noop():
-    assert ingest_entities([], client=_FakeClient()) is None
-    assert ingest_users([], client=_FakeClient()) is None
-    assert ingest_groups([], client=_FakeClient()) is None
-    assert ingest_apps([], client=_FakeClient()) is None
+def test_empty_native_ingest_is_rejected():
+    with pytest.raises(NativeIngestError, match="at least one entity"):
+        ingest_entities([], client=_FakeClient())

@@ -1,0 +1,37 @@
+{
+  "api_version": "graphos.io/v1",
+  "artifacts": {
+    "a2a.json": "d32ce1c0f43c2197a5f7e81ebf106beedf2372769d2b3aaf27beab1bde5cc234",
+    "connector_manifest.yml": "f929273682d4c532b263bc0358b51555d7250ccd0f67fc1951992468ef0916df",
+    "okta_agent/connectors/mcp_source_presets.json": "13a5df1a3bc0c1eb08e28ff48123c1523877e9e6864a17dc28f008498d83b881",
+    "okta_agent/connectors/tool_schema_fingerprints.json": "b12af8a6cc9b8df63c72844a325295833a9bf2929a52e2dc90be286f713f5586",
+    "okta_agent/ontology/fixtures/records.json": "0849b3680dda8cf73125847171ad29bf4407dd82fdf8301f51f048cd965f16a1",
+    "okta_agent/ontology/mappings/source.yaml": "6cbb90b427207dcf060502a4518215a1c32905642279264abe6dafe3d93d5ac2",
+    "okta_agent/ontology/migrations/manifest.json": "e9b1f101d12abd2b4562da17899754ea2574b67801f2c929af5085a8194d0b7c",
+    "okta_agent/ontology/okta.ttl": "833745562eeea59f6e047e51a2a4e380335e579220919894951f2a11f4411676",
+    "okta_agent/ontology/shapes/connector.shacl.ttl": "f8c0d9fde84e21eb56387cccedc5daaa1566738373d81da08b4ee4a21990a6f5"
+  },
+  "checks": {
+    "declared_tool_schema": "passed",
+    "manifest_integrity": "passed",
+    "privacy_contract": "passed",
+    "shacl_parse": "passed",
+    "synthetic_fixture_contract": "passed"
+  },
+  "compatibility": {
+    "agent_utilities": ">=1.27.1,<2",
+    "bundle_schema": "2",
+    "epistemic_graph": ">=2.23.1,<3"
+  },
+  "connector": "okta-agent",
+  "kind": "ConnectorSourceAttestation",
+  "live_certified": false,
+  "mode": "offline-source",
+  "schema_version": "2",
+  "signature": "FHmIOntxxnDuzfaKNc81mZUpCMa7Mr2JqlCtc2ZkSleorHq0y6aF2gh59ba5a6D6QD_gHIyG11ItTAn_zAKsAQ",
+  "signature_algorithm": "ed25519",
+  "signer": "ontology-manifest-generator",
+  "signing_public_key": "q0Cp7bmQMqJhbofGKKw8xXC6KbFzukBDDke0UYVi8y4",
+  "status": "source-validated",
+  "validated_at": "2026-07-18T00:00:00Z"
+}

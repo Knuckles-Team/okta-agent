@@ -34,7 +34,7 @@ async def run_policies(
     try:
         p = parse_params(params_json)
     except ValueError as exc:
-        return {"error": {"message": f"Invalid params_json: {exc}"}}
+        return {"error": {"message": f"Invalid params_json: {type(exc).__name__}"}}
 
     if action in OUT_OF_SCOPE_POLICY_ACTIONS:
         return {

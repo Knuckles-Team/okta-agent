@@ -17,7 +17,7 @@ pip install okta-agent[all]       # everything
 | `OKTA_PRIVATE_KEY` / `OKTA_PRIVATE_KEY_FILE` | — | RS256 private key (PEM inline / path) |
 | `OKTA_KEY_ID` | — | Optional `kid` for the client assertion |
 | `OKTA_SCOPES` | `okta.users.read okta.groups.read okta.apps.read` | Space-separated Okta API scopes |
-| `OKTA_SSL_VERIFY` | `True` | TLS verification |
+| `OKTA_TLS_PROFILE` | `system` | TLS verification |
 | `OKTA_MAX_RETRIES` | `2` | Retry attempts on HTTP 429 |
 | `OKTA_BACKOFF_CAP_SECONDS` | `60` | Upper bound on a single 429 backoff sleep |
 | `OKTA_ALLOW_DESTRUCTIVE` | `False` | Org-wide default for the destructive-action gate |

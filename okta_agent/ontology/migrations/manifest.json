@@ -1,0 +1,6 @@
+{
+  "connector": "okta-agent",
+  "current_ontology_source": "okta",
+  "migrations": [],
+  "schema_version": "1"
+}

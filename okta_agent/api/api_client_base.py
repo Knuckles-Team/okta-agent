@@ -26,6 +26,10 @@ from urllib.parse import parse_qs, urlparse
 
 import httpx
 from agent_utilities.base_utilities import get_logger
+from agent_utilities.core.transport_security import (
+    ResolvedTLSProfile,
+    resolve_configured_tls_profile,
+)
 
 from okta_agent.api.credentials import NoCredential, OktaCredential
 
@@ -97,7 +101,7 @@ class ApiClientBase:
         self,
         org_url: str,
         credential: OktaCredential | None = None,
-        verify: bool = True,
+        tls_profile: ResolvedTLSProfile | None = None,
         timeout: float = DEFAULT_TIMEOUT,
         max_retries: int = DEFAULT_MAX_RETRIES,
         backoff_cap: float = DEFAULT_BACKOFF_CAP,
@@ -109,11 +113,12 @@ class ApiClientBase:
         self.backoff_cap = backoff_cap
         #: Rate-limit snapshot from the most recent response.
         self.last_rate_limit: dict[str, int] | None = None
+        self.tls_profile = tls_profile or resolve_configured_tls_profile("okta")
         self._client = httpx.Client(
             base_url=self.org_url,
-            verify=verify,
             timeout=timeout,
             transport=transport,
+            **self.tls_profile.httpx_kwargs(),
         )
 
     # ------------------------------------------------------------------ #
@@ -175,7 +180,7 @@ class ApiClientBase:
                 headers["Content-Type"] = "application/json"
             headers.update(self.credential.headers())
 
-            logger.debug("Okta request: %s %s", method, redact_secrets(url))
+            logger.debug("Okta request started: method=%s", method)
             response = self._client.request(
                 method, url, params=params, json=json_body, headers=headers
             )
@@ -207,16 +212,13 @@ class ApiClientBase:
                 body = {}
         except Exception:
             body = {}
-        secrets = self.credential.secrets()
-        summary = redact_secrets(
-            str(body.get("errorSummary") or response.text[:500]), secrets
-        )
+        summary = "Okta request failed"
         return OktaApiError(
             status=response.status_code,
             error_code=body.get("errorCode"),
             error_summary=summary,
-            error_id=body.get("errorId"),
-            error_causes=body.get("errorCauses"),
+            error_id=None,
+            error_causes=[],
             rate_limit=self.last_rate_limit,
         )
 

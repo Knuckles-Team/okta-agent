@@ -1,0 +1,55 @@
+{
+  "connector": "okta-agent",
+  "fixtures": [
+    {
+      "expected": {
+        "acl_state": "quarantine",
+        "id": "fixture-record",
+        "title": "Synthetic certification record"
+      },
+      "preset": "okta-apps",
+      "record": {
+        "acl_public": false,
+        "id": "fixture-record",
+        "label": "Synthetic certification record",
+        "lastUpdated": "2000-01-01T00:00:00Z",
+        "signOnMode": "Synthetic content used only for contract validation."
+      }
+    },
+    {
+      "expected": {
+        "acl_state": "quarantine",
+        "id": "fixture-record",
+        "title": "Synthetic certification record"
+      },
+      "preset": "okta-groups",
+      "record": {
+        "acl_public": false,
+        "id": "fixture-record",
+        "lastUpdated": "2000-01-01T00:00:00Z",
+        "profile": {
+          "description": "Synthetic content used only for contract validation.",
+          "name": "Synthetic certification record"
+        }
+      }
+    },
+    {
+      "expected": {
+        "acl_state": "quarantine",
+        "id": "fixture-record",
+        "title": "Synthetic certification record"
+      },
+      "preset": "okta-users",
+      "record": {
+        "acl_public": false,
+        "id": "fixture-record",
+        "lastUpdated": "2000-01-01T00:00:00Z",
+        "profile": {
+          "email": "Synthetic content used only for contract validation.",
+          "login": "Synthetic certification record"
+        }
+      }
+    }
+  ],
+  "schema_version": "1"
+}
