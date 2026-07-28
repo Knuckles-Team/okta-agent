@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-MARKER_RE = re.compile(r"CONCEPT:([A-Z]+-[\d.]+)")
+MARKER_RE = re.compile(r"CONCEPT:([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+(?:\.[A-Za-z0-9-]+)+)")
 
 
 def _markers_in(path: Path) -> set[str]:
@@ -29,5 +29,11 @@ def test_all_code_concepts_registered_in_docs():
 @pytest.mark.concept("OK-OS.governance.okta")
 def test_expected_concepts_present():
     code_concepts = _markers_in(REPO_ROOT / "okta_agent")
-    for concept in ("OK-OS.governance.okta", "OK-OS.identity.okta", "OK-OS.governance.okta-2", "OK-OS.identity.default", "OK-OS.governance.okta-3"):
+    for concept in (
+        "OK-OS.governance.okta",
+        "OK-OS.identity.okta",
+        "OK-OS.governance.okta-2",
+        "OK-OS.identity.default",
+        "OK-OS.governance.okta-3",
+    ):
         assert concept in code_concepts
