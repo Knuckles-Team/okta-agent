@@ -164,6 +164,8 @@ pytest -v
 | `CONCEPT:OK-OS.identity.default` | Safety Gating & Redaction | `allow_destructive` gate (default false) + secret redaction |
 | `CONCEPT:OK-OS.governance.okta-3` | SCIM Filter Building | Escaped, structured `filter` expression construction |
 | `CONCEPT:AU-ECO.messaging.native-backend-abstraction` | Ecosystem Compliance | Multi-package integration compliance standard |
+| `CONCEPT:AU-KG.ingest.enterprise-source-extractor` | Native KG Ingestion | Governed, typed Okta identity ingestion into epistemic-graph |
+| `CONCEPT:AU-KG.ontology.federation-provider-leg` | Ontology Federation | Okta ontology contribution federated into the shared KG |
 
 ## Domain Rules
 

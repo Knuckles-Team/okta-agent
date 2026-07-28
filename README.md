@@ -9,7 +9,7 @@
 ![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/okta-agent)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/okta-agent)
 
-*Version: 1.0.1*
+*Version: 2.0.0*
 
 > **Documentation** — Installation, deployment, usage across the API, CLI, and MCP
 > server live on the docs site:
@@ -139,8 +139,8 @@ See `.env.example` for every knob (`OKTA_TLS_PROFILE`, `OKTA_MAX_RETRIES`,
 | `TRANSPORT` | `stdio` | options: stdio, streamable-http, sse |
 | `ENABLE_OTEL` | `True` |  |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:8080/api/public/otel` |  |
-| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | secret-injected |  |
-| `OTEL_EXPORTER_OTLP_SECRET_KEY` | secret-injected |  |
+| `OTEL_EXPORTER_OTLP_PUBLIC_KEY_REF` | `secret://telemetry/otlp-public-key` |  |
+| `OTEL_EXPORTER_OTLP_SECRET_KEY_REF` | `secret://telemetry/otlp-secret-key` |  |
 | `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |  |
 | `EUNOMIA_TYPE` | `none` | options: none, embedded, remote |
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
@@ -163,6 +163,7 @@ See `.env.example` for every knob (`OKTA_TLS_PROFILE`, `OKTA_MAX_RETRIES`,
 | `APPSTOOL` | `True` |  |
 | `POLICIESTOOL` | `True` |  |
 | `SYSTEMTOOL` | `True` |  |
+| `INGESTTOOL` | `True` |  |
 
 #### Inherited agent-utilities variables (apply to every connector)
 
@@ -185,7 +186,7 @@ See `.env.example` for every knob (`OKTA_TLS_PROFILE`, `OKTA_MAX_RETRIES`,
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_29 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_30 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -245,12 +246,13 @@ and (where applicable) `allow_destructive`.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `okta_apps` | `APPSTOOL` | Manage Okta applications — CRUD, lifecycle, and user/group assignments. |
 | `okta_groups` | `GROUPSTOOL` | Manage Okta groups — CRUD, membership, and dynamic group rules. |
+| `okta_ingest` | `INGESTTOOL` | Natively ingest Okta users/groups/apps into epistemic-graph as typed nodes. |
 | `okta_policies` | `POLICIESTOOL` | Inspect Okta policies and toggle policy/rule lifecycle. |
 | `okta_system` | `SYSTEMTOOL` | Inspect the Okta org — settings, auth servers, system log, authenticators, zones. |
 | `okta_users` | `USERSTOOL` | Manage Okta users — lifecycle, credentials, groups/apps/factors, sessions. |
@@ -319,7 +321,7 @@ and (where applicable) `allow_destructive`.
 
 </details>
 
-_5 action-routed tool(s) (default) · 54 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_6 action-routed tool(s) · 54 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 ### Examples

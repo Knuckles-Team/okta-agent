@@ -8,8 +8,14 @@ CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 
 from __future__ import annotations
 
+from typing import Any
+
+import msgpack
 import pytest
+from agent_utilities.knowledge_graph.core.session import GraphSession, use_session
 from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
+from agent_utilities.models.company_brain import ActorType
+from agent_utilities.security.brain_context import ActorContext, use_actor
 
 from okta_agent.kg_ingest import (
     ingest_apps,
@@ -19,30 +25,93 @@ from okta_agent.kg_ingest import (
 )
 
 
-class _FakeTxn:
-    def __init__(self):
-        self.nodes = {}
-        self.edges = []
-        self.committed = False
+@pytest.fixture(autouse=True)
+def _governed_session():
+    """Bind the authenticated GraphSession required by native ingestion."""
+    actor = ActorContext(
+        actor_id="subject:opaque:synthetic",
+        actor_type=ActorType.AUTOMATED_SERVICE,
+        roles=(),
+        tenant_id="tenant:opaque:synthetic",
+        authenticated=True,
+    )
+    session = GraphSession(
+        actor=actor,
+        tenant=actor.tenant_id,
+        scopes=frozenset({"kg:write"}),
+        graph="__commons__",
+        policy_version="policy:opaque:synthetic",
+        audience="epistemic-graph",
+    )
+    with use_actor(actor), use_session(session):
+        yield
 
-    def begin(self, graph=None):
-        self.graph = graph
-        return "txn-1"
 
-    def add_node(self, txn, node_id, props):
-        self.nodes[node_id] = props
+class _FakeNodes:
+    def __init__(self) -> None:
+        self.values: dict[str, dict[str, Any]] = {}
 
-    def add_edge(self, txn, source, target, props):
-        self.edges.append((source, target, props))
+    def properties(self, node_id: str) -> dict[str, Any] | None:
+        return self.values.get(node_id)
 
-    def commit(self, txn):
-        self.committed = True
-        return True
+    def list(self) -> list[tuple[str, dict[str, Any]]]:
+        return list(self.values.items())
+
+
+class _FakeChanges:
+    def __init__(self, nodes: _FakeNodes) -> None:
+        self.nodes = nodes
+        self.edges: list[tuple[str, str, dict[str, Any]]] = []
+        self.applied: list[dict[str, Any]] = []
+        self.records: dict[str, dict[str, Any]] = {}
+        self.versions: dict[str, dict[str, Any]] = {}
+
+    def get(self, envelope_id: str) -> dict[str, Any] | None:
+        return self.records.get(envelope_id)
+
+    def content_version(self, object_id: str) -> dict[str, Any] | None:
+        return self.versions.get(object_id)
+
+    def cursor(self, _source: str, _partition: str = "") -> None:
+        return None
+
+    def apply(self, envelope: dict[str, Any]) -> dict[str, Any]:
+        self.applied.append(envelope)
+        mutation = envelope["mutation"]
+        for operation in mutation["operations"]:
+            method = operation["method"]
+            params = method["params"]
+            properties = msgpack.unpackb(params["properties_msgpack"], raw=False)
+            if method["method"] == "AddNode":
+                self.nodes.values[params["node_id"]] = properties
+            elif method["method"] == "AddEdge":
+                self.edges.append(
+                    (params["source_id"], params["target_id"], properties)
+                )
+        version = envelope["content_version"]
+        self.versions[version["object_id"]] = version
+        self.records[envelope["envelope_id"]] = envelope
+        return {
+            "batch_id": mutation["batch_id"],
+            "replayed": False,
+            "projection_pending": False,
+        }
+
+
+class _FakeRdf:
+    def validate_shacl(self, _shapes: str, _data_graph: str) -> dict[str, Any]:
+        return {"conforms": True, "results": []}
 
 
 class _FakeClient:
-    def __init__(self):
-        self.txn = _FakeTxn()
+    def __init__(self) -> None:
+        self.nodes = _FakeNodes()
+        self.changes = _FakeChanges(self.nodes)
+        self.rdf = _FakeRdf()
+
+    @staticmethod
+    def supports(operation: str) -> bool:
+        return operation == "ApplyChangeEnvelope"
 
 
 def test_ingest_entities_writes_nodes_and_edges():
@@ -57,12 +126,12 @@ def test_ingest_entities_writes_nodes_and_edges():
         graph="__commons__",
     )
     assert res == {"nodes": 2, "edges": 1}
-    assert c.txn.committed is True
-    assert set(c.txn.nodes) == {"a", "b"}
+    assert c.changes.applied
+    assert set(c.nodes.values) == {"a", "b"}
     # provenance is stamped
-    assert c.txn.nodes["a"]["source"] == "okta-agent"
-    assert c.txn.nodes["a"]["domain"] == "okta"
-    assert c.txn.edges == [("a", "b", {"relationship": "memberOfGroup"})]
+    assert c.nodes.values["a"]["source"] == "okta-agent"
+    assert c.nodes.values["a"]["domain"] == "okta"
+    assert c.changes.edges == [("a", "b", {"relationship": "memberOfGroup"})]
 
 
 def test_ingest_users_maps_user_and_group_edge():
@@ -85,13 +154,13 @@ def test_ingest_users_maps_user_and_group_edge():
         graph="__commons__",
     )
     assert res == {"nodes": 1, "edges": 1}
-    node = c.txn.nodes["okta:user:00u1"]
+    node = c.nodes.values["okta:user:00u1"]
     assert node["node_type"] == "User"
     assert node["name"] == "Ada Lovelace"
-    assert node["login"] == "ada@acme.com"
+    assert node["login"] == "[REDACTED_EMAIL]"
     assert node["status"] == "ACTIVE"
     assert node["externalToolId"] == "00u1"
-    assert c.txn.edges == [
+    assert c.changes.edges == [
         ("okta:user:00u1", "okta:group:00g9", {"relationship": "memberOfGroup"})
     ]
 
@@ -110,7 +179,7 @@ def test_ingest_groups_maps_group():
         graph="__commons__",
     )
     assert res == {"nodes": 1, "edges": 0}
-    node = c.txn.nodes["okta:group:00g9"]
+    node = c.nodes.values["okta:group:00g9"]
     assert node["node_type"] == "Group"
     assert node["name"] == "Engineering"
     assert node["groupType"] == "OKTA_GROUP"
@@ -132,7 +201,7 @@ def test_ingest_apps_maps_application():
         graph="__commons__",
     )
     assert res == {"nodes": 1, "edges": 0}
-    node = c.txn.nodes["okta:app:0oa5"]
+    node = c.nodes.values["okta:app:0oa5"]
     assert node["node_type"] == "Application"
     assert node["name"] == "Salesforce"
     assert node["signOnMode"] == "SAML_2_0"
