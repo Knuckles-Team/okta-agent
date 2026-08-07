@@ -13,3 +13,5 @@
 | `CONCEPT:OK-OS.identity.default` | Safety Gating & Redaction | Destructive operations blocked behind `allow_destructive` (default false); credential material redacted from logs and error envelopes |
 | `CONCEPT:OK-OS.governance.okta-3` | SCIM Filter Building | Structured, escaped construction of Okta's SCIM-style `filter` expressions |
 | `CONCEPT:AU-ECO.messaging.native-backend-abstraction` | Ecosystem Compliance | Multi-package integration compliance standard |
+| `CONCEPT:AU-KG.ingest.enterprise-source-extractor` | Native KG Ingestion | Governed, typed ingestion of Okta users, groups, and applications into epistemic-graph |
+| `CONCEPT:AU-KG.ontology.federation-provider-leg` | Ontology Federation | Package-provided Okta ontology contribution federated into the shared knowledge graph |

@@ -62,6 +62,8 @@ def dispatch(call: Callable[[], Any]) -> Any:
     except OktaApiError as exc:
         return {"error": exc.to_dict()}
     except KeyError as exc:
-        return {"error": {"message": f"Missing required parameter: {type(exc).__name__}."}}
-    except ValueError as exc:
+        return {
+            "error": {"message": f"Missing required parameter: {type(exc).__name__}."}
+        }
+    except ValueError:
         return {"error": {"message": "Operation failed"}}
