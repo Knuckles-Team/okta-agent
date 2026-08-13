@@ -39,6 +39,9 @@ okta-agent = "okta_agent.connectors"
 [project.entry-points."agent_utilities.prompt_providers"]
 okta-agent = "okta_agent.prompts"
 
+[tool.uv.workspace]
+members = ["."]
+
 [tool.setuptools]
 include-package-data = true
 
