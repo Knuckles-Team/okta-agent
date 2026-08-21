@@ -1,8 +1,7 @@
 {
   "api_version": "graphos.io/v1",
   "artifacts": {
-    "a2a.json": "bb04f31de15c6a899cb37079a906c32f215fd42c8d644e7a517863792fc7aaca",
-    "connector_manifest.yml": "6ce53d10af8891c8773b50c70a1195d82d74e1ba5bd9e90b3dbe5ca54887892d",
+    "connector_manifest.yml": "45a9cafc0709d56abd84da17a75d63435da492aa5f1c36b9ea6bb06c3b86e8a3",
     "okta_agent/connectors/mcp_source_presets.json": "f1c1fcaf34a972ac2b137127e8ff5e4ea537fba2265341752befd0d457cb0a91",
     "okta_agent/connectors/tool_schema_fingerprints.json": "b12af8a6cc9b8df63c72844a325295833a9bf2929a52e2dc90be286f713f5586",
     "okta_agent/ontology/fixtures/records.json": "0849b3680dda8cf73125847171ad29bf4407dd82fdf8301f51f048cd965f16a1",
@@ -19,19 +18,19 @@
     "synthetic_fixture_contract": "passed"
   },
   "compatibility": {
-    "agent_utilities": ">=2.1.0,<3",
+    "agent_utilities": ">=2.4.0,<3",
     "bundle_schema": "2",
-    "epistemic_graph": ">=2.23.0,<3"
+    "epistemic_graph": ">=2.26.0,<3"
   },
   "connector": "okta-agent",
   "kind": "ConnectorSourceAttestation",
   "live_certified": false,
   "mode": "offline-source",
   "schema_version": "2",
-  "signature": "9wjyKJkysJjamaqKGns4XgTemsNFLc73PjWTKqKVbvdwJI8G87Zjpp0NJ6iVnAxG2q2DcSegPbJsZFXQO9a7Cw",
-  "signature_algorithm": "ed25519",
-  "signer": "ontology-manifest-generator",
-  "signing_public_key": "QkigdPNpcUU7x7NcSkwCsUXIQpaFncMQbYSoiSgI2SY",
+  "signature": null,
+  "signature_algorithm": "none",
+  "signer": "UNSIGNED-PREVIEW",
+  "signing_public_key": "",
   "status": "source-validated",
-  "validated_at": "2026-07-31T04:00:00Z"
+  "validated_at": "2026-08-21T04:30:39Z"
 }
