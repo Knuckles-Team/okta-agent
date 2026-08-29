@@ -27,6 +27,42 @@ OUT_OF_SCOPE_POLICY_ACTIONS = {
 }
 
 
+def _out_of_scope_error(action: str) -> dict[str, Any]:
+    return {
+        "error": {
+            "message": (
+                f"Policy action {action!r} is intentionally out of scope "
+                "in this release: Okta policy documents are deeply nested "
+                "and type-specific, and a malformed write can lock an org "
+                "out. Use list/get/list_rules and the activate/deactivate "
+                "lifecycle actions, or manage policy bodies in the Okta "
+                "Admin Console."
+            )
+        }
+    }
+
+
+#: One handler per policies action: ``(client, params) -> raw client-call result``.
+#: dispatch() wraps the actual call for uniform error handling.
+_POLICY_ACTION_HANDLERS: dict[str, Any] = {
+    "list": lambda client, p: client.list_policies(
+        p["type"], status=p.get("status"), max_items=p.get("max_items", 1000)
+    ),
+    "get": lambda client, p: client.get_policy(
+        p["policy_id"], with_rules=p.get("with_rules", False)
+    ),
+    "list_rules": lambda client, p: client.list_policy_rules(p["policy_id"]),
+    "activate": lambda client, p: client.activate_policy(p["policy_id"]),
+    "deactivate": lambda client, p: client.deactivate_policy(p["policy_id"]),
+    "activate_rule": lambda client, p: client.activate_policy_rule(
+        p["policy_id"], p["rule_id"]
+    ),
+    "deactivate_rule": lambda client, p: client.deactivate_policy_rule(
+        p["policy_id"], p["rule_id"]
+    ),
+}
+
+
 async def run_policies(
     action: str, params_json: str = "{}", allow_destructive: bool = False
 ) -> Any:
@@ -37,53 +73,17 @@ async def run_policies(
         return {"error": {"message": f"Invalid params_json: {type(exc).__name__}"}}
 
     if action in OUT_OF_SCOPE_POLICY_ACTIONS:
-        return {
-            "error": {
-                "message": (
-                    f"Policy action {action!r} is intentionally out of scope "
-                    "in this release: Okta policy documents are deeply nested "
-                    "and type-specific, and a malformed write can lock an org "
-                    "out. Use list/get/list_rules and the activate/deactivate "
-                    "lifecycle actions, or manage policy bodies in the Okta "
-                    "Admin Console."
-                )
-            }
-        }
+        return _out_of_scope_error(action)
 
     blocked = destructive_blocked(action, DESTRUCTIVE_POLICY_ACTIONS, allow_destructive)
     if blocked:
         return blocked
 
     client = get_client()
-    if action == "list":
-        return dispatch(
-            lambda: client.list_policies(
-                p["type"],
-                status=p.get("status"),
-                max_items=p.get("max_items", 1000),
-            )
-        )
-    if action == "get":
-        return dispatch(
-            lambda: client.get_policy(
-                p["policy_id"], with_rules=p.get("with_rules", False)
-            )
-        )
-    if action == "list_rules":
-        return dispatch(lambda: client.list_policy_rules(p["policy_id"]))
-    if action == "activate":
-        return dispatch(lambda: client.activate_policy(p["policy_id"]))
-    if action == "deactivate":
-        return dispatch(lambda: client.deactivate_policy(p["policy_id"]))
-    if action == "activate_rule":
-        return dispatch(
-            lambda: client.activate_policy_rule(p["policy_id"], p["rule_id"])
-        )
-    if action == "deactivate_rule":
-        return dispatch(
-            lambda: client.deactivate_policy_rule(p["policy_id"], p["rule_id"])
-        )
-    return {"error": {"message": f"Unknown policies action {action!r}."}}
+    handler = _POLICY_ACTION_HANDLERS.get(action)
+    if handler is None:
+        return {"error": {"message": f"Unknown policies action {action!r}."}}
+    return dispatch(lambda: handler(client, p))
 
 
 def register_policies_tools(mcp: FastMCP) -> None:

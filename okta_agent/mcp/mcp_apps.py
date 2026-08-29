@@ -17,6 +17,46 @@ APP_ACTIONS = (
 )
 
 
+#: One handler per apps action: ``(client, params) -> raw client-call result``.
+#: dispatch() wraps the actual call for uniform error handling.
+_APP_ACTION_HANDLERS: dict[str, Any] = {
+    "list": lambda client, p: client.list_apps(
+        q=p.get("q"),
+        filter_expr=p.get("filter"),
+        limit=p.get("limit", 200),
+        max_items=p.get("max_items", 1000),
+    ),
+    "get": lambda client, p: client.get_app(p["app_id"]),
+    "create": lambda client, p: client.create_app(
+        p["template"],
+        p["label"],
+        settings=p.get("settings"),
+        activate=p.get("activate", True),
+    ),
+    "update": lambda client, p: client.update_app(p["app_id"], p["app"]),
+    "activate": lambda client, p: client.activate_app(p["app_id"]),
+    "deactivate": lambda client, p: client.deactivate_app(p["app_id"]),
+    "list_users": lambda client, p: client.list_app_users(
+        p["app_id"], max_items=p.get("max_items", 1000)
+    ),
+    "assign_user": lambda client, p: client.assign_user_to_app(
+        p["app_id"], p["user_id"], profile=p.get("profile")
+    ),
+    "unassign_user": lambda client, p: client.unassign_user_from_app(
+        p["app_id"], p["user_id"]
+    ),
+    "list_groups": lambda client, p: client.list_app_groups(
+        p["app_id"], max_items=p.get("max_items", 1000)
+    ),
+    "assign_group": lambda client, p: client.assign_group_to_app(
+        p["app_id"], p["group_id"], priority=p.get("priority")
+    ),
+    "unassign_group": lambda client, p: client.unassign_group_from_app(
+        p["app_id"], p["group_id"]
+    ),
+}
+
+
 async def run_apps(
     action: str, params_json: str = "{}", allow_destructive: bool = False
 ) -> Any:
@@ -31,65 +71,10 @@ async def run_apps(
         return blocked
 
     client = get_client()
-    if action == "list":
-        return dispatch(
-            lambda: client.list_apps(
-                q=p.get("q"),
-                filter_expr=p.get("filter"),
-                limit=p.get("limit", 200),
-                max_items=p.get("max_items", 1000),
-            )
-        )
-    if action == "get":
-        return dispatch(lambda: client.get_app(p["app_id"]))
-    if action == "create":
-        return dispatch(
-            lambda: client.create_app(
-                p["template"],
-                p["label"],
-                settings=p.get("settings"),
-                activate=p.get("activate", True),
-            )
-        )
-    if action == "update":
-        return dispatch(lambda: client.update_app(p["app_id"], p["app"]))
-    if action == "activate":
-        return dispatch(lambda: client.activate_app(p["app_id"]))
-    if action == "deactivate":
-        return dispatch(lambda: client.deactivate_app(p["app_id"]))
-    if action == "list_users":
-        return dispatch(
-            lambda: client.list_app_users(
-                p["app_id"], max_items=p.get("max_items", 1000)
-            )
-        )
-    if action == "assign_user":
-        return dispatch(
-            lambda: client.assign_user_to_app(
-                p["app_id"], p["user_id"], profile=p.get("profile")
-            )
-        )
-    if action == "unassign_user":
-        return dispatch(
-            lambda: client.unassign_user_from_app(p["app_id"], p["user_id"])
-        )
-    if action == "list_groups":
-        return dispatch(
-            lambda: client.list_app_groups(
-                p["app_id"], max_items=p.get("max_items", 1000)
-            )
-        )
-    if action == "assign_group":
-        return dispatch(
-            lambda: client.assign_group_to_app(
-                p["app_id"], p["group_id"], priority=p.get("priority")
-            )
-        )
-    if action == "unassign_group":
-        return dispatch(
-            lambda: client.unassign_group_from_app(p["app_id"], p["group_id"])
-        )
-    return {"error": {"message": f"Unknown apps action {action!r}."}}
+    handler = _APP_ACTION_HANDLERS.get(action)
+    if handler is None:
+        return {"error": {"message": f"Unknown apps action {action!r}."}}
+    return dispatch(lambda: handler(client, p))
 
 
 def register_apps_tools(mcp: FastMCP) -> None:

@@ -24,6 +24,59 @@ USER_ACTIONS = (
 )
 
 
+#: One handler per users action: ``(client, params) -> raw client-call result``.
+#: dispatch() wraps the actual call for uniform error handling.
+_USER_ACTION_HANDLERS: dict[str, Any] = {
+    "list": lambda client, p: client.list_users(
+        q=p.get("q"),
+        filter_expr=p.get("filter"),
+        search=p.get("search"),
+        limit=p.get("limit", 200),
+        max_items=p.get("max_items", 1000),
+    ),
+    "search": lambda client, p: client.search_users(
+        conditions=p.get("conditions"),
+        joiner=p.get("joiner", "and"),
+        q=p.get("q"),
+        limit=p.get("limit", 200),
+        max_items=p.get("max_items", 1000),
+    ),
+    "get": lambda client, p: client.get_user(p["user_id"]),
+    "create": lambda client, p: client.create_user(
+        profile=p["profile"],
+        credentials=p.get("credentials"),
+        group_ids=p.get("group_ids"),
+        activate=p.get("activate", True),
+    ),
+    "update": lambda client, p: client.update_user(
+        p["user_id"], profile=p.get("profile"), credentials=p.get("credentials")
+    ),
+    "activate": lambda client, p: client.activate_user(
+        p["user_id"], send_email=p.get("send_email", False)
+    ),
+    "deactivate": lambda client, p: client.deactivate_user(
+        p["user_id"], send_email=p.get("send_email", False)
+    ),
+    "suspend": lambda client, p: client.suspend_user(p["user_id"]),
+    "unsuspend": lambda client, p: client.unsuspend_user(p["user_id"]),
+    "unlock": lambda client, p: client.unlock_user(p["user_id"]),
+    "expire_password": lambda client, p: client.expire_password(
+        p["user_id"], temp_password=p.get("temp_password", False)
+    ),
+    "reset_password": lambda client, p: client.reset_password(
+        p["user_id"], send_email=p.get("send_email", True)
+    ),
+    "list_groups": lambda client, p: client.list_user_groups(
+        p["user_id"], max_items=p.get("max_items", 1000)
+    ),
+    "list_apps": lambda client, p: client.list_user_apps(p["user_id"]),
+    "list_factors": lambda client, p: client.list_user_factors(p["user_id"]),
+    "clear_sessions": lambda client, p: client.clear_user_sessions(
+        p["user_id"], oauth_tokens=p.get("oauth_tokens", False)
+    ),
+}
+
+
 async def run_users(
     action: str, params_json: str = "{}", allow_destructive: bool = False
 ) -> Any:
@@ -38,92 +91,10 @@ async def run_users(
         return blocked
 
     client = get_client()
-    if action == "list":
-        return dispatch(
-            lambda: client.list_users(
-                q=p.get("q"),
-                filter_expr=p.get("filter"),
-                search=p.get("search"),
-                limit=p.get("limit", 200),
-                max_items=p.get("max_items", 1000),
-            )
-        )
-    if action == "search":
-        return dispatch(
-            lambda: client.search_users(
-                conditions=p.get("conditions"),
-                joiner=p.get("joiner", "and"),
-                q=p.get("q"),
-                limit=p.get("limit", 200),
-                max_items=p.get("max_items", 1000),
-            )
-        )
-    if action == "get":
-        return dispatch(lambda: client.get_user(p["user_id"]))
-    if action == "create":
-        return dispatch(
-            lambda: client.create_user(
-                profile=p["profile"],
-                credentials=p.get("credentials"),
-                group_ids=p.get("group_ids"),
-                activate=p.get("activate", True),
-            )
-        )
-    if action == "update":
-        return dispatch(
-            lambda: client.update_user(
-                p["user_id"],
-                profile=p.get("profile"),
-                credentials=p.get("credentials"),
-            )
-        )
-    if action == "activate":
-        return dispatch(
-            lambda: client.activate_user(
-                p["user_id"], send_email=p.get("send_email", False)
-            )
-        )
-    if action == "deactivate":
-        return dispatch(
-            lambda: client.deactivate_user(
-                p["user_id"], send_email=p.get("send_email", False)
-            )
-        )
-    if action == "suspend":
-        return dispatch(lambda: client.suspend_user(p["user_id"]))
-    if action == "unsuspend":
-        return dispatch(lambda: client.unsuspend_user(p["user_id"]))
-    if action == "unlock":
-        return dispatch(lambda: client.unlock_user(p["user_id"]))
-    if action == "expire_password":
-        return dispatch(
-            lambda: client.expire_password(
-                p["user_id"], temp_password=p.get("temp_password", False)
-            )
-        )
-    if action == "reset_password":
-        return dispatch(
-            lambda: client.reset_password(
-                p["user_id"], send_email=p.get("send_email", True)
-            )
-        )
-    if action == "list_groups":
-        return dispatch(
-            lambda: client.list_user_groups(
-                p["user_id"], max_items=p.get("max_items", 1000)
-            )
-        )
-    if action == "list_apps":
-        return dispatch(lambda: client.list_user_apps(p["user_id"]))
-    if action == "list_factors":
-        return dispatch(lambda: client.list_user_factors(p["user_id"]))
-    if action == "clear_sessions":
-        return dispatch(
-            lambda: client.clear_user_sessions(
-                p["user_id"], oauth_tokens=p.get("oauth_tokens", False)
-            )
-        )
-    return {"error": {"message": f"Unknown users action {action!r}."}}
+    handler = _USER_ACTION_HANDLERS.get(action)
+    if handler is None:
+        return {"error": {"message": f"Unknown users action {action!r}."}}
+    return dispatch(lambda: handler(client, p))
 
 
 def register_users_tools(mcp: FastMCP) -> None:

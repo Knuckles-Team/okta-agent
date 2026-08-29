@@ -17,6 +17,51 @@ GROUP_ACTIONS = (
 )
 
 
+#: One handler per groups action: ``(client, params) -> raw client-call result``.
+#: dispatch() wraps the actual call for uniform error handling.
+_GROUP_ACTION_HANDLERS: dict[str, Any] = {
+    "list": lambda client, p: client.list_groups(
+        q=p.get("q"),
+        filter_expr=p.get("filter"),
+        search=p.get("search"),
+        limit=p.get("limit", 200),
+        max_items=p.get("max_items", 1000),
+    ),
+    "search": lambda client, p: client.search_groups(
+        conditions=p.get("conditions"),
+        joiner=p.get("joiner", "and"),
+        q=p.get("q"),
+        limit=p.get("limit", 200),
+        max_items=p.get("max_items", 1000),
+    ),
+    "get": lambda client, p: client.get_group(p["group_id"]),
+    "create": lambda client, p: client.create_group(
+        p["name"], description=p.get("description")
+    ),
+    "update": lambda client, p: client.update_group(
+        p["group_id"], p["name"], description=p.get("description")
+    ),
+    "delete": lambda client, p: client.delete_group(p["group_id"]),
+    "list_members": lambda client, p: client.list_group_members(
+        p["group_id"], max_items=p.get("max_items", 1000)
+    ),
+    "add_member": lambda client, p: client.add_group_member(
+        p["group_id"], p["user_id"]
+    ),
+    "remove_member": lambda client, p: client.remove_group_member(
+        p["group_id"], p["user_id"]
+    ),
+    "list_rules": lambda client, p: client.list_group_rules(
+        search=p.get("search"), max_items=p.get("max_items", 1000)
+    ),
+    "create_rule": lambda client, p: client.create_group_rule(
+        p["name"], p["expression"], p["assign_group_ids"]
+    ),
+    "activate_rule": lambda client, p: client.activate_group_rule(p["rule_id"]),
+    "deactivate_rule": lambda client, p: client.deactivate_group_rule(p["rule_id"]),
+}
+
+
 async def run_groups(
     action: str, params_json: str = "{}", allow_destructive: bool = False
 ) -> Any:
@@ -31,67 +76,10 @@ async def run_groups(
         return blocked
 
     client = get_client()
-    if action == "list":
-        return dispatch(
-            lambda: client.list_groups(
-                q=p.get("q"),
-                filter_expr=p.get("filter"),
-                search=p.get("search"),
-                limit=p.get("limit", 200),
-                max_items=p.get("max_items", 1000),
-            )
-        )
-    if action == "search":
-        return dispatch(
-            lambda: client.search_groups(
-                conditions=p.get("conditions"),
-                joiner=p.get("joiner", "and"),
-                q=p.get("q"),
-                limit=p.get("limit", 200),
-                max_items=p.get("max_items", 1000),
-            )
-        )
-    if action == "get":
-        return dispatch(lambda: client.get_group(p["group_id"]))
-    if action == "create":
-        return dispatch(
-            lambda: client.create_group(p["name"], description=p.get("description"))
-        )
-    if action == "update":
-        return dispatch(
-            lambda: client.update_group(
-                p["group_id"], p["name"], description=p.get("description")
-            )
-        )
-    if action == "delete":
-        return dispatch(lambda: client.delete_group(p["group_id"]))
-    if action == "list_members":
-        return dispatch(
-            lambda: client.list_group_members(
-                p["group_id"], max_items=p.get("max_items", 1000)
-            )
-        )
-    if action == "add_member":
-        return dispatch(lambda: client.add_group_member(p["group_id"], p["user_id"]))
-    if action == "remove_member":
-        return dispatch(lambda: client.remove_group_member(p["group_id"], p["user_id"]))
-    if action == "list_rules":
-        return dispatch(
-            lambda: client.list_group_rules(
-                search=p.get("search"), max_items=p.get("max_items", 1000)
-            )
-        )
-    if action == "create_rule":
-        return dispatch(
-            lambda: client.create_group_rule(
-                p["name"], p["expression"], p["assign_group_ids"]
-            )
-        )
-    if action == "activate_rule":
-        return dispatch(lambda: client.activate_group_rule(p["rule_id"]))
-    if action == "deactivate_rule":
-        return dispatch(lambda: client.deactivate_group_rule(p["rule_id"]))
-    return {"error": {"message": f"Unknown groups action {action!r}."}}
+    handler = _GROUP_ACTION_HANDLERS.get(action)
+    if handler is None:
+        return {"error": {"message": f"Unknown groups action {action!r}."}}
+    return dispatch(lambda: handler(client, p))
 
 
 def register_groups_tools(mcp: FastMCP) -> None:
