@@ -46,6 +46,37 @@ def _profile(rec: dict[str, Any]) -> dict[str, Any]:
     return prof if isinstance(prof, dict) else {}
 
 
+def _user_entity(uid: str, user: dict[str, Any]) -> dict[str, Any]:
+    prof = _profile(user)
+    return {
+        "id": f"okta:user:{uid}",
+        "node_type": "User",
+        "name": " ".join(p for p in (prof.get("firstName"), prof.get("lastName")) if p)
+        or prof.get("login"),
+        "login": prof.get("login"),
+        "email": prof.get("email"),
+        "status": user.get("status"),
+        "created": user.get("created"),
+        "lastLogin": user.get("lastLogin"),
+        "externalToolId": str(uid),
+    }
+
+
+def _user_group_relationships(uid: str, user: dict[str, Any]) -> list[dict[str, Any]]:
+    relationships: list[dict[str, Any]] = []
+    for grp in user.get("groups") or []:
+        gid = grp.get("id") if isinstance(grp, dict) else grp
+        if gid:
+            relationships.append(
+                {
+                    "source": f"okta:user:{uid}",
+                    "target": f"okta:group:{gid}",
+                    "relationship": "memberOfGroup",
+                }
+            )
+    return relationships
+
+
 def ingest_users(
     users: list[dict[str, Any]],
     *,
@@ -59,33 +90,8 @@ def ingest_users(
         uid = user.get("id")
         if not uid:
             continue
-        prof = _profile(user)
-        entities.append(
-            {
-                "id": f"okta:user:{uid}",
-                "node_type": "User",
-                "name": " ".join(
-                    p for p in (prof.get("firstName"), prof.get("lastName")) if p
-                )
-                or prof.get("login"),
-                "login": prof.get("login"),
-                "email": prof.get("email"),
-                "status": user.get("status"),
-                "created": user.get("created"),
-                "lastLogin": user.get("lastLogin"),
-                "externalToolId": str(uid),
-            }
-        )
-        for grp in user.get("groups") or []:
-            gid = grp.get("id") if isinstance(grp, dict) else grp
-            if gid:
-                relationships.append(
-                    {
-                        "source": f"okta:user:{uid}",
-                        "target": f"okta:group:{gid}",
-                        "relationship": "memberOfGroup",
-                    }
-                )
+        entities.append(_user_entity(uid, user))
+        relationships.extend(_user_group_relationships(uid, user))
     return ingest_entities(entities, relationships, client=client, graph=graph)
 
 
