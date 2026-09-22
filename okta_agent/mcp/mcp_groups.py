@@ -1,6 +1,6 @@
 """CONCEPT:OK-OS.governance.okta-2 MCP tool for Okta group operations (action-routed)."""
 
-from typing import Any
+from typing import Any, Literal
 
 from fastmcp import FastMCP
 from pydantic import Field
@@ -87,7 +87,21 @@ def register_groups_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(tags={"groups"})
     async def okta_groups(
-        action: str = Field(description=f"Action to perform. One of: {GROUP_ACTIONS}."),
+        action: Literal[
+            "activate_rule",
+            "add_member",
+            "create",
+            "create_rule",
+            "deactivate_rule",
+            "delete",
+            "get",
+            "list",
+            "list_members",
+            "list_rules",
+            "remove_member",
+            "search",
+            "update",
+        ] = Field(description=f"Action to perform. One of: {GROUP_ACTIONS}."),
         params_json: str = Field(
             default="{}",
             description=(

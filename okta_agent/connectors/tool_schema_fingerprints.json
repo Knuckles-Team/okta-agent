@@ -1,10 +1,10 @@
 {
-  "algorithm": "agent-utilities:mcp-tool-schema-compat:v1",
+  "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
   "connector": "okta-agent",
   "schema_version": "1",
   "tools": {
-    "okta_apps": "6ff2bae6fae945eff62584efc2d75bddad777e61f209cad0de904055c20fc243",
-    "okta_groups": "edb42a85eb1ac297aff11b6104a116c3565ce76e10131c6a3fc0e16c51977e5c",
-    "okta_users": "e458bef4e01d9a616200031a49892c3fe3f352312bf8889f3c5766d7f7d1941e"
+    "okta_apps": "0619a581910623c28de67a168b44821379d757086b3a94802dbd5e61d0c2c300",
+    "okta_groups": "195ca52552d87b0c196c3d7179b74805565b05f3c76894f4b1d9dd2ed51e0a11",
+    "okta_users": "95fe8754d6ee13e36acfd886f8317554abb4e5a9c57c478b17bdc942b8c7128a"
   }
 }

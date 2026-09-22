@@ -1,6 +1,6 @@
 """CONCEPT:OK-OS.governance.okta-2 MCP tool for Okta user operations (action-routed)."""
 
-from typing import Any
+from typing import Any, Literal
 
 from fastmcp import FastMCP
 from pydantic import Field
@@ -102,7 +102,24 @@ def register_users_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(tags={"users"})
     async def okta_users(
-        action: str = Field(description=f"Action to perform. One of: {USER_ACTIONS}."),
+        action: Literal[
+            "activate",
+            "clear_sessions",
+            "create",
+            "deactivate",
+            "expire_password",
+            "get",
+            "list",
+            "list_apps",
+            "list_factors",
+            "list_groups",
+            "reset_password",
+            "search",
+            "suspend",
+            "unlock",
+            "unsuspend",
+            "update",
+        ] = Field(description=f"Action to perform. One of: {USER_ACTIONS}."),
         params_json: str = Field(
             default="{}",
             description=(

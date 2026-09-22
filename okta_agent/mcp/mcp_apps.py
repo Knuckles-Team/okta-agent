@@ -1,6 +1,6 @@
 """CONCEPT:OK-OS.governance.okta-2 MCP tool for Okta application operations (action-routed)."""
 
-from typing import Any
+from typing import Any, Literal
 
 from fastmcp import FastMCP
 from pydantic import Field
@@ -82,7 +82,20 @@ def register_apps_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(tags={"apps"})
     async def okta_apps(
-        action: str = Field(description=f"Action to perform. One of: {APP_ACTIONS}."),
+        action: Literal[
+            "activate",
+            "assign_group",
+            "assign_user",
+            "create",
+            "deactivate",
+            "get",
+            "list",
+            "list_groups",
+            "list_users",
+            "unassign_group",
+            "unassign_user",
+            "update",
+        ] = Field(description=f"Action to perform. One of: {APP_ACTIONS}."),
         params_json: str = Field(
             default="{}",
             description=(

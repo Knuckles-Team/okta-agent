@@ -208,7 +208,7 @@ sync:
   updated_field: lastUpdated
   pagination: null
   doc_type: Application
-  tool_schema_sha256: 6ff2bae6fae945eff62584efc2d75bddad777e61f209cad0de904055c20fc243
+  tool_schema_sha256: 0619a581910623c28de67a168b44821379d757086b3a94802dbd5e61d0c2c300
   raw:
     server: okta-mcp
     tool: okta_apps
@@ -230,7 +230,7 @@ sync:
   updated_field: lastUpdated
   pagination: null
   doc_type: Group
-  tool_schema_sha256: edb42a85eb1ac297aff11b6104a116c3565ce76e10131c6a3fc0e16c51977e5c
+  tool_schema_sha256: 195ca52552d87b0c196c3d7179b74805565b05f3c76894f4b1d9dd2ed51e0a11
   raw:
     server: okta-mcp
     tool: okta_groups
@@ -252,7 +252,7 @@ sync:
   updated_field: lastUpdated
   pagination: null
   doc_type: User
-  tool_schema_sha256: e458bef4e01d9a616200031a49892c3fe3f352312bf8889f3c5766d7f7d1941e
+  tool_schema_sha256: 95fe8754d6ee13e36acfd886f8317554abb4e5a9c57c478b17bdc942b8c7128a
   raw:
     server: okta-mcp
     tool: okta_users
