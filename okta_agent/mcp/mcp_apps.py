@@ -80,7 +80,18 @@ async def run_apps(
 def register_apps_tools(mcp: FastMCP) -> None:
     """Register the Okta apps tool."""
 
-    @mcp.tool(tags={"apps"})
+    @mcp.tool(
+        tags={"apps"},
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def okta_apps(
         action: Literal[
             "activate",

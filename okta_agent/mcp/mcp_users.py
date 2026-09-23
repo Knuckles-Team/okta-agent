@@ -100,7 +100,18 @@ async def run_users(
 def register_users_tools(mcp: FastMCP) -> None:
     """Register the Okta users tool."""
 
-    @mcp.tool(tags={"users"})
+    @mcp.tool(
+        tags={"users"},
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def okta_users(
         action: Literal[
             "activate",

@@ -85,7 +85,18 @@ async def run_groups(
 def register_groups_tools(mcp: FastMCP) -> None:
     """Register the Okta groups tool."""
 
-    @mcp.tool(tags={"groups"})
+    @mcp.tool(
+        tags={"groups"},
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def okta_groups(
         action: Literal[
             "activate_rule",
