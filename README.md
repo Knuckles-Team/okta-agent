@@ -63,36 +63,30 @@ graph TD
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `okta-agent[mcp]` to add
 > FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
-> still carries `epistemic-graph[full]`. The `[agent]` extra additionally
-> enables model orchestration.
 
 Pick the extra that matches what you want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `okta-agent[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You only run the **MCP server** (smallest install / image) |
-| `okta-agent[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated A2A agent** |
 | `okta-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
 pip install okta-agent            # core API client
 pip install okta-agent[mcp]       # connector-focused MCP server (FastMCP/FastAPI)
-pip install okta-agent[agent]     # full A2A agent runtime + epistemic-graph engine
 pip install okta-agent[all]       # everything (development)
 ```
 
-### Container images (`:mcp` vs `:agent`)
+### Container image
 
-One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+One multi-stage `docker/Dockerfile` builds a single, right-sized image:
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
 | `example/okta-agent:mcp` | `--target mcp` | `okta-agent[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `okta-mcp` |
-| `example/okta-agent@sha256:<digest>` | `--target agent` (default) | `okta-agent[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `okta-agent` |
 
 ```bash
 docker build --target mcp   -t example/okta-agent:mcp    docker/   # connector-focused MCP server
-docker build --target agent -t example/okta-agent:agent-local docker/   # agent runtime
 ```
 
 `docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/agent.compose.yml` runs the
@@ -100,10 +94,8 @@ agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
-Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` additionally enables model orchestration. Local
-deployments can use the bundled engine. For production or shared state, run
+`[mcp]` carries the **epistemic-graph** engine through the required Agent Utilities
+core dependency (`epistemic-graph[full]`). Local deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
 diagrams are documented in the
@@ -189,7 +181,6 @@ See `.env.example` for every knob (`OKTA_TLS_PROFILE`, `OKTA_MAX_RETRIES`,
 _30 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
-
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `OKTA_ORG_URL` | — | Okta org URL, no trailing slash (`OKTA_AGENT_BASE_URL` accepted as fallback) |
@@ -234,7 +225,6 @@ params = SearchInput(
 ```bash
 okta-mcp                                  # stdio MCP server
 okta-mcp --transport streamable-http --host 0.0.0.0 --port 8000
-okta-agent                                # A2A agent server
 ```
 
 ## MCP Tools
@@ -407,7 +397,6 @@ pre-commit run --all-files
 API references are cited in every client docstring
 (https://developer.okta.com/docs/api/).
 
-
 <!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
 
 ## Deploy with `agent-utilities-deployment`
@@ -421,7 +410,7 @@ to **"deploy `okta-agent` with agent-utilities-deployment"**.
 | Install mode | Command |
 |------|---------|
 | Installed package | `uv tool install "okta-agent[mcp]"`, then run `okta-mcp` |
-| Editable source | `uv pip install -e ".[agent]"`, then run `okta-mcp` |
+| Editable source | `uv pip install -e ".[mcp]"`, then run `okta-mcp` |
 | Immutable container | deploy `registry.example.invalid/okta-agent@sha256:<digest>` through the operator-selected orchestrator |
 
 The repository embeds no deployment profile, credential value, certificate path, or
