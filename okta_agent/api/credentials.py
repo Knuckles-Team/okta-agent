@@ -20,11 +20,9 @@ import uuid
 
 import httpx
 import jwt
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.transport_security import (
-    ResolvedTLSProfile,
-    resolve_configured_tls_profile,
-)
+from agent_connector_sdk.utilities import get_logger
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
 logger = get_logger(__name__)
 
@@ -91,7 +89,7 @@ class PrivateKeyJwt:
         self.kid = kid
         self._access_token: str | None = None
         self._expires_at: float = 0.0
-        self.tls_profile = tls_profile or resolve_configured_tls_profile("okta")
+        self.tls_profile = tls_profile or resolve_tls_profile("okta")
         self._http = httpx.Client(
             transport=transport,
             timeout=30.0,

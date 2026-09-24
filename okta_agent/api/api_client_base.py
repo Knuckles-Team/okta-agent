@@ -25,11 +25,9 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 import httpx
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.transport_security import (
-    ResolvedTLSProfile,
-    resolve_configured_tls_profile,
-)
+from agent_connector_sdk.utilities import get_logger
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
 from okta_agent.api.credentials import NoCredential, OktaCredential
 
@@ -113,7 +111,7 @@ class ApiClientBase:
         self.backoff_cap = backoff_cap
         #: Rate-limit snapshot from the most recent response.
         self.last_rate_limit: dict[str, int] | None = None
-        self.tls_profile = tls_profile or resolve_configured_tls_profile("okta")
+        self.tls_profile = tls_profile or resolve_tls_profile("okta")
         self._client = httpx.Client(
             base_url=self.org_url,
             timeout=timeout,

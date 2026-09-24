@@ -20,9 +20,9 @@ gate for destructive tool actions, see :mod:`okta_agent.mcp`).
 
 import os
 
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.config import setting
-from agent_utilities.core.transport_security import resolve_configured_tls_profile
+from agent_connector_sdk.utilities import get_logger
+from agent_connector_sdk.config import setting
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
 from okta_agent.api.api_client_base import (
     DEFAULT_BACKOFF_CAP,
@@ -55,7 +55,7 @@ def get_client() -> Api:
         # Default fallback for testing
         org_url = "https://localhost"
 
-    tls_profile = resolve_configured_tls_profile(
+    tls_profile = resolve_tls_profile(
         "okta",
         profile_name=setting("OKTA_TLS_PROFILE", "") or None,
         profile_ref=setting("OKTA_TLS_PROFILE_REF", "") or None,
