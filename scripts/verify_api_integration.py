@@ -3,6 +3,7 @@ import ast
 import glob
 import os
 import sys
+from typing import TypeGuard
 
 BASELINES = {
     "adguard-home-agent": 89.2,
@@ -38,7 +39,9 @@ def _is_api_class(node: ast.ClassDef) -> bool:
     return "api" in class_name or "client" in class_name or node.name == "Api"
 
 
-def _is_public_method(item: ast.stmt) -> bool:
+def _is_public_method(
+    item: ast.stmt,
+) -> TypeGuard[ast.FunctionDef | ast.AsyncFunctionDef]:
     """True for a class-body method that should count as public API surface."""
     return (
         isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef))
