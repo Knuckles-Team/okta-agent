@@ -146,7 +146,7 @@ AG-UI web interface on its port.
 | `HOST` / `PORT` / `TRANSPORT` | MCP server bind + transport |
 | `USERSTOOL` … `SYSTEMTOOL` | Per-domain tool toggles |
 
-Mount secrets (API token, private key) from your secret store; never bake them
+Mount secrets (API token, private key) from the operator's secret store; never bake them
 into the image. Keep `OKTA_ALLOW_DESTRUCTIVE=False` in shared deployments.
 
 ## Reverse proxy + DNS (Caddy + Technitium)

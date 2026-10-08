@@ -44,7 +44,7 @@ verb taxonomy so agents can switch IdPs with familiar verbs.
   `X-Rate-Limit-*` snapshot; HTTP 429 triggers capped automatic backoff.
 - Cursor pagination via `Link: rel="next"` headers (Okta's `after` cursor),
   with hard item caps and resumable `next_cursor`s.
-- Safety: destructive operations (deactivate / delete / clear sessions /
+- Safety: destructive operations (disable / remove / clear sessions /
   password ops) are blocked unless explicitly allowed; credential material is
   redacted from logs and error envelopes.
 
@@ -63,15 +63,15 @@ graph TD
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `okta-agent[mcp]` to add
 > FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
-> still carries `epistemic-graph[full]`. The `[agent]` extra additionally
+> still carries `epistemic-graph[full]`. The `[agent]` extra also
 > enables model orchestration.
 
-Pick the extra that matches what you want to run:
+Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `okta-agent[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You only run the **MCP server** (smallest install / image) |
-| `okta-agent[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated A2A agent** |
+| `okta-agent[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `okta-agent[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated A2A agent** |
 | `okta-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -102,7 +102,7 @@ agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
 Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
 Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` additionally enables model orchestration. Local
+the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
