@@ -43,13 +43,16 @@ async def run_ingest(action: str, params_json: str = "{}") -> Any:
 
     if action in ("users", "all"):
         users = _records(client.list_users(limit=limit, max_items=max_items))
-        result["users"] = {"listed": len(users), "ingested": ingest_users(users)}
+        result["users"] = {"listed": len(users), "ingested": await ingest_users(users)}
     if action in ("groups", "all"):
         groups = _records(client.list_groups(limit=limit, max_items=max_items))
-        result["groups"] = {"listed": len(groups), "ingested": ingest_groups(groups)}
+        result["groups"] = {
+            "listed": len(groups),
+            "ingested": await ingest_groups(groups),
+        }
     if action in ("apps", "all"):
         apps = _records(client.list_apps(limit=limit, max_items=max_items))
-        result["apps"] = {"listed": len(apps), "ingested": ingest_apps(apps)}
+        result["apps"] = {"listed": len(apps), "ingested": await ingest_apps(apps)}
 
     if not result:
         return {"error": {"message": f"Unknown ingest action {action!r}."}}
