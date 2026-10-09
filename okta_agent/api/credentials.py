@@ -15,18 +15,16 @@ Every credential exposes ``headers()`` (per-request auth headers) and
 messages — see :mod:`okta_agent.api.api_client_base`).
 """
 
+import logging
 import time
 import uuid
 
 import httpx
 import jwt
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.transport_security import (
-    ResolvedTLSProfile,
-    resolve_configured_tls_profile,
-)
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 CLIENT_ASSERTION_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 #: Seconds before real expiry at which a cached access token is refreshed.
@@ -91,7 +89,7 @@ class PrivateKeyJwt:
         self.kid = kid
         self._access_token: str | None = None
         self._expires_at: float = 0.0
-        self.tls_profile = tls_profile or resolve_configured_tls_profile("okta")
+        self.tls_profile = tls_profile or resolve_tls_profile("okta")
         self._http = httpx.Client(
             transport=transport,
             timeout=30.0,
