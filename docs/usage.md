@@ -69,9 +69,3 @@ Destructive operations require explicit consent:
   "allow_destructive": true
 }
 ```
-
-## Agent server
-
-```bash
-okta-agent --provider openai --model-id gpt-4o --port 9000
-```
