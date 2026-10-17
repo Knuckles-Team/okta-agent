@@ -1,6 +1,6 @@
 # okta-agent
 
-Okta **API + MCP Server + A2A Agent** for the agent-utilities ecosystem — a typed,
+Okta **API + MCP Server + A2A Agent** for the agent-connector-sdk ecosystem — a typed,
 action-routed connector for the Okta Management API (users, groups, applications,
 policies, and the system log).
 

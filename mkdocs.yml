@@ -1,5 +1,5 @@
 site_name: "okta-agent"
-site_description: "Okta CIAM/SSO MCP Server + Agent for the agent-utilities ecosystem — action-routed tools for users, groups, apps, policies, and the system log."
+site_description: "Okta CIAM/SSO MCP Server + Agent for the agent-connector-sdk ecosystem — action-routed tools for users, groups, apps, policies, and the system log."
 site_url: "https://knuckles-team.github.io/okta-agent/"
 repo_name: "Knuckles-Team/okta-agent"
 repo_url: "https://github.com/Knuckles-Team/okta-agent"

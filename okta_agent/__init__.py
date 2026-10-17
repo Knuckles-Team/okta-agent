@@ -13,7 +13,6 @@ CORE_MODULES = [
     "okta_agent.api_client",
 ]
 OPTIONAL_MODULES = {
-    "okta_agent.agent_server": "agent",
     "okta_agent.mcp_server": "mcp",
 }
 

@@ -4,7 +4,7 @@
   "schema_version": "1.0",
   "prompt_version": "0.1.0",
   "source": "okta-agent",
-  "extends": "agent-utilities:base",
+  "extends": "agent-connector-sdk:base",
   "compose": "append",
   "description": "Okta CIAM/SSO identity specialist: user lifecycle, group and application access, and directory mirroring over the okta-agent MCP server.",
   "metadata": {
