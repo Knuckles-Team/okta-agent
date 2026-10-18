@@ -3,8 +3,8 @@
   "connector": "okta-agent",
   "schema_version": "1",
   "tools": {
-    "okta_apps": "0a274f3d6858464466958f39f9c2c9af72b19ec84ca0a176b7400f2c776d61db",
-    "okta_groups": "69cd24eff6584dca4a2ae032c5285600436c5532cd724cc4fda6d4c9148ef6e5",
-    "okta_users": "45e8630e8d4ff566840663beb784dba661d374139290b6f556e1bdddb9110682"
+    "okta_list_apps": "dd142e543ce07cfc0f49e40e088a9148d5c48067636a64856c5c099462f664a2",
+    "okta_list_groups": "6162c92797d4f1636db47c29a578b3ee1b0b8100a3f8b8cc174b2e5de63f6fa0",
+    "okta_list_users": "573febe5046deb002ed74cc5a8f1a9d4a4b98d5ca56b5815bb26a03f8bf83919"
   }
 }

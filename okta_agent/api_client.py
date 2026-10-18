@@ -10,7 +10,7 @@ from okta_agent.api.api_client_policies import Api as PoliciesApi
 from okta_agent.api.api_client_system import Api as SystemApi
 from okta_agent.api.api_client_users import Api as UsersApi
 
-__version__ = "2.2.1"
+__version__ = "2.3.0"
 
 
 class Api(UsersApi, GroupsApi, AppsApi, PoliciesApi, SystemApi):
