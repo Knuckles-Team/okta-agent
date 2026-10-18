@@ -1,12 +1,5 @@
 # Installation
 
-```bash
-pip install okta-agent            # core API client
-pip install okta-agent[mcp]       # + MCP server (okta-mcp)
-pip install okta-agent[agent]     # + Pydantic AI agent server (okta-agent)
-pip install okta-agent[all]       # everything
-```
-
 ## Environment
 
 | Variable | Default | Purpose |

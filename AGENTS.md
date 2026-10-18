@@ -7,7 +7,7 @@ This file acts as a machine-readable README for AI coding agents collaborating o
 
 ## Tech Stack & Architecture
 - **Language**: Python >= 3.11
-- **Ecosystem**: `agent-utilities` Dynamic Facade
+- **Ecosystem**: `agent-connector-sdk` Dynamic Facade
 - **MCP Server**: FastMCP (stdio and HTTP support)
 - **HTTP**: raw `httpx` against the Okta Management API (no Okta SDK)
 - **Key Files**:
@@ -18,14 +18,6 @@ This file acts as a machine-readable README for AI coding agents collaborating o
   - `okta_agent/mcp/common.py`: destructive-action gate and error envelopes.
 
 ### Architecture Diagram
-```mermaid
-graph TD
-    User([User/A2A]) --> Server[A2A Server / FastAPI]
-    Server --> Agent[Pydantic AI Agent]
-    Agent --> MCP[MCP Server / FastMCP]
-    MCP --> Client[API Client / httpx]
-    Client --> ExternalAPI([Okta Management API])
-```
 
 ### Workflow Diagram
 ```mermaid
@@ -69,90 +61,6 @@ pytest -v
 ## Project Structure
 
 ### File Tree
-```text
-.
-├── .bumpversion.cfg
-├── .env.example
-├── .gitignore
-├── .pre-commit-config.yaml
-├── a2a.json
-├── AGENTS.md
-├── CHANGELOG.md
-├── LICENSE
-├── MANIFEST.in
-├── mcp_config.json
-├── mkdocs.yml
-├── opencode.json
-├── pyproject.toml
-├── pytest.ini
-├── README.md
-├── requirements.txt
-├── uv.lock
-├── docker
-│   ├── Dockerfile
-│   ├── debug.Dockerfile
-│   ├── agent.compose.yml
-│   ├── mcp.compose.yml
-│   └── starship.toml
-├── docs
-│   ├── concepts.md
-│   ├── deployment.md
-│   ├── index.md
-│   ├── installation.md
-│   ├── overview.md
-│   └── usage.md
-├── scripts
-│   ├── security_sanitizer.py
-│   ├── validate_a2a_agent.py
-│   ├── validate_agent.py
-│   └── verify_api_integration.py
-├── tests
-│   ├── conftest.py
-│   ├── test_api_wrapper.py
-│   ├── test_apps_client.py
-│   ├── test_auth.py
-│   ├── test_concept_parity.py
-│   ├── test_credentials.py
-│   ├── test_filters.py
-│   ├── test_groups_client.py
-│   ├── test_init_dynamics.py
-│   ├── test_okta_mcp_validation.py
-│   ├── test_okta_models.py
-│   ├── test_pagination.py
-│   ├── test_policies_client.py
-│   ├── test_startup.py
-│   ├── test_system_client.py
-│   └── test_users_client.py
-└── okta_agent
-    ├── __init__.py
-    ├── __main__.py
-    ├── agent_server.py
-    ├── api
-    │   ├── __init__.py
-    │   ├── api_client_apps.py
-    │   ├── api_client_base.py
-    │   ├── api_client_groups.py
-    │   ├── api_client_policies.py
-    │   ├── api_client_system.py
-    │   ├── api_client_users.py
-    │   ├── credentials.py
-    │   └── filters.py
-    ├── api_client.py
-    ├── auth.py
-    ├── main_agent.json
-    ├── mcp
-    │   ├── __init__.py
-    │   ├── common.py
-    │   ├── mcp_apps.py
-    │   ├── mcp_groups.py
-    │   ├── mcp_policies.py
-    │   ├── mcp_system.py
-    │   └── mcp_users.py
-    ├── mcp_config.json
-    ├── mcp_server.py
-    ├── okta_input_models.py
-    └── okta_response_models.py
-```
 
 ## Concept Registry
 
@@ -311,10 +219,10 @@ alone).
 Working in parallel with other sessions/worktrees? **Reserve a concept id before you write its `CONCEPT:` marker** so two sessions never collide:
 
 ```bash
-agent-utilities --json concept reserve --ns EG-KG.compute.backend   # or a package prefix, e.g. KEY
+agent-connector-sdk --json concept reserve --ns EG-KG.compute.backend   # or a package prefix, e.g. KEY
 ```
 
-Full protocol (ledger, merge=union, reconcile, MCP/REST): <https://knuckles-team.github.io/agent-utilities/concept_coordination/>
+Full protocol (ledger, merge=union, reconcile, MCP/REST): <https://knuckles-team.github.io/agent-connector-sdk/concept_coordination/>
 <!-- END concept-coordination (generated) -->
 
 ## Version & lockfile drift edict (keep the version mirrors AND the lock in sync)
@@ -342,14 +250,14 @@ is what Dependabot flags. Rules:
 ## Upstream currency edict — target the newest release; a pin is a hypothesis, not a fact (READ BEFORE capping, deferring, or opt-in-gating an upgrade)
 
 This governs how this repository treat **other people's** releases, deprecations, and version caps in
-this repo (fleet-wide edict, propagated from `agent-utilities/AGENTS.md`).
+this repo (fleet-wide edict, propagated from `agent-connector-sdk/AGENTS.md`).
 
 1. **Latest by default.** Target the newest upstream release -- including a pre-release
    where the ecosystem has already moved onto it. Sitting on an old major because the
    upgrade is work is not a reason to defer it.
 2. **A conservative upstream pin is a hypothesis, not a fact -- test it, don't inherit
    it.** Upstream maintainers cap defensively (an unreleased major, an untested surface)
-   as often as they cap for a known break. Worked example (from `agent-utilities`):
+   as often as they cap for a known break. Worked example (from `agent-connector-sdk`):
    `pydantic-ai-slim` 2.18.0 declared `fastmcp-slim[client]>=3.3.0` with no upper bound;
    2.19.0 added `<4` purely as a defensive guard while fastmcp 4 was still pre-release --
    not because of an observed incompatibility. Blocking an upgrade on that kind of cap

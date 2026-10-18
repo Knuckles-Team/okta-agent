@@ -4,7 +4,7 @@ import importlib
 import inspect
 from typing import Any
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 __all__: list[str] = []
 
 CORE_MODULES = [
@@ -13,7 +13,6 @@ CORE_MODULES = [
     "okta_agent.api_client",
 ]
 OPTIONAL_MODULES = {
-    "okta_agent.agent_server": "agent",
     "okta_agent.mcp_server": "mcp",
 }
 
@@ -44,7 +43,6 @@ def _import_module_safely(module_name: str):
 
 _AVAILABILITY_FLAG_MARKERS = {
     "_MCP_AVAILABLE": "mcp_server",
-    "_AGENT_AVAILABLE": "agent_server",
 }
 _NOT_AN_AVAILABILITY_FLAG = object()
 _NAME_NOT_FOUND = object()

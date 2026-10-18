@@ -2,12 +2,12 @@
 name: okta-agent-operations
 skill_type: skill
 description: >-
-  Operate okta-agent through its governed MCP and GraphOS capabilities, including okta access management, okta directory ingestion, okta user lifecycle. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
+  Operate okta-agent through its governed MCP and Arbora capabilities, including okta access management, okta directory ingestion, okta user lifecycle. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
 ---
 
 # Okta Agent Operations
 
-Use the provider's governed MCP tools through GraphOS delegation.
+Use the provider's governed MCP tools through Arbora delegation.
 
 ## Workflow
 
