@@ -102,7 +102,9 @@ def register_users_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(tags={"users"})
     async def okta_users(
-        action: str = Field(description=f"Action to perform. One of: {USER_ACTIONS}."),
+        action: str = Field(
+            description=f"Action to perform. One of: {', '.join(repr(a.strip()) for a in USER_ACTIONS.split(','))}."
+        ),
         params_json: str = Field(
             default="{}",
             description=(

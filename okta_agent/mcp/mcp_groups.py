@@ -87,7 +87,9 @@ def register_groups_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(tags={"groups"})
     async def okta_groups(
-        action: str = Field(description=f"Action to perform. One of: {GROUP_ACTIONS}."),
+        action: str = Field(
+            description=f"Action to perform. One of: {', '.join(repr(a.strip()) for a in GROUP_ACTIONS.split(','))}."
+        ),
         params_json: str = Field(
             default="{}",
             description=(

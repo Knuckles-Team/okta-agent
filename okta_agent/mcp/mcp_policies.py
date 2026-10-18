@@ -93,7 +93,7 @@ def register_policies_tools(mcp: FastMCP) -> None:
     async def okta_policies(
         action: str = Field(
             description=(
-                f"Action to perform. One of: {POLICY_ACTIONS}. Policy/rule "
+                f"Action to perform. One of: {', '.join(repr(a.strip()) for a in POLICY_ACTIONS.split(','))}. Policy/rule "
                 "create and update are intentionally out of scope in this "
                 "release (read + lifecycle only)."
             )

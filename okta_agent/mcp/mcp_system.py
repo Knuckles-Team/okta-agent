@@ -59,7 +59,7 @@ def register_system_tools(mcp: FastMCP) -> None:
     @mcp.tool(tags={"system"})
     async def okta_system(
         action: str = Field(
-            description=f"Action to perform. One of: {SYSTEM_ACTIONS}."
+            description=f"Action to perform. One of: {', '.join(repr(a.strip()) for a in SYSTEM_ACTIONS.split(','))}."
         ),
         params_json: str = Field(
             default="{}",

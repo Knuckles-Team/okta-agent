@@ -82,7 +82,9 @@ def register_apps_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(tags={"apps"})
     async def okta_apps(
-        action: str = Field(description=f"Action to perform. One of: {APP_ACTIONS}."),
+        action: str = Field(
+            description=f"Action to perform. One of: {', '.join(repr(a.strip()) for a in APP_ACTIONS.split(','))}."
+        ),
         params_json: str = Field(
             default="{}",
             description=(
