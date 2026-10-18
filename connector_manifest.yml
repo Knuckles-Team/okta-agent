@@ -56,9 +56,23 @@ actions:
   description: 'Answers epistemic_status/why/what_changed queries over the shared knowledge graph: calibrated
     confidence, evidence/source citations, belief justification trees, bitemporal valid/tx history, and
     policy-redaction-aware provenance.'
+  label: ''
+  parameters: []
+  target_resource: null
+  conflict_policy: null
+  requires_approval: true
+  approval_class: unclassified
+  effects: []
 - id: run_graph_flow
   name: Graph Flow Execution
   description: Execute a workflow through the agent's graph orchestration engine
+  label: ''
+  parameters: []
+  target_resource: null
+  conflict_policy: null
+  requires_approval: true
+  approval_class: unclassified
+  effects: []
 events:
 - name: okta-apps.updated
   resource: Application
@@ -199,8 +213,8 @@ schema_mappings:
 sync:
 - preset: okta-apps
   server: okta-mcp
-  tool: okta_apps
-  action: list
+  tool: okta_list_apps
+  action: null
   records_path: data
   id_field: id
   title_field: label
@@ -208,21 +222,21 @@ sync:
   updated_field: lastUpdated
   pagination: null
   doc_type: Application
-  tool_schema_sha256: 0a274f3d6858464466958f39f9c2c9af72b19ec84ca0a176b7400f2c776d61db
+  tool_schema_sha256: dd142e543ce07cfc0f49e40e088a9148d5c48067636a64856c5c099462f664a2
   raw:
     server: okta-mcp
-    tool: okta_apps
-    action: list
+    tool: okta_list_apps
     records_path: data
     id_field: id
     title_field: label
     text_field: signOnMode
     updated_field: lastUpdated
     doc_type: Application
+    params_style: args
 - preset: okta-groups
   server: okta-mcp
-  tool: okta_groups
-  action: list
+  tool: okta_list_groups
+  action: null
   records_path: data
   id_field: id
   title_field: profile.name
@@ -230,21 +244,21 @@ sync:
   updated_field: lastUpdated
   pagination: null
   doc_type: Group
-  tool_schema_sha256: 69cd24eff6584dca4a2ae032c5285600436c5532cd724cc4fda6d4c9148ef6e5
+  tool_schema_sha256: 6162c92797d4f1636db47c29a578b3ee1b0b8100a3f8b8cc174b2e5de63f6fa0
   raw:
     server: okta-mcp
-    tool: okta_groups
-    action: list
+    tool: okta_list_groups
     records_path: data
     id_field: id
     title_field: profile.name
     text_field: profile.description
     updated_field: lastUpdated
     doc_type: Group
+    params_style: args
 - preset: okta-users
   server: okta-mcp
-  tool: okta_users
-  action: list
+  tool: okta_list_users
+  action: null
   records_path: data
   id_field: id
   title_field: profile.login
@@ -252,33 +266,33 @@ sync:
   updated_field: lastUpdated
   pagination: null
   doc_type: User
-  tool_schema_sha256: 45e8630e8d4ff566840663beb784dba661d374139290b6f556e1bdddb9110682
+  tool_schema_sha256: 573febe5046deb002ed74cc5a8f1a9d4a4b98d5ca56b5815bb26a03f8bf83919
   raw:
     server: okta-mcp
-    tool: okta_users
-    action: list
+    tool: okta_list_users
     records_path: data
     id_field: id
     title_field: profile.login
     text_field: profile.email
     updated_field: lastUpdated
     doc_type: User
+    params_style: args
 provenance:
   generated_by: scripts/generate_connector_manifests.py
-  generated_at: '2026-08-26T13:42:55Z'
+  generated_at: '2026-10-18T00:00:00Z'
   source_artifacts:
   - okta_agent/connectors/mcp_source_presets.json
   - okta_agent/connectors/tool_schema_fingerprints.json
   - okta_agent/ontology/okta.ttl
   integrity:
     algorithm: urdna2015-sha256
-    hash: b6a7b3594c4788de68bc6f1b32793f0d59089a2cee9ed88f54908ee5387360d4
+    hash: 245a429c106c0a55d77de77ada447a9ce956bae6416823af69e8d7cd4b55817d
     triple_count: 87
   signer: UNSIGNED-PREVIEW
   signature_algorithm: none
   signing_public_key: ''
   signature: null
-  source_commit: 1a3d52845796f3f4db54a82a1dcdd390d03dd84d
+  source_commit: 0106f3a1d499dd870859ed78e658f64834e1f6d6
 policy:
   pii_fields:
     Application:
