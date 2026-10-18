@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Okta CIAM/SSO MCP Server + Agent for the agent-utilities ecosystem — action-routed tools for users, groups, apps, policies, and the system log.">
+        <meta name="description" content="Okta CIAM/SSO MCP Server + Agent for the agent-connector-sdk ecosystem — action-routed tools for users, groups, apps, policies, and the system log.">
       
       
       
@@ -713,17 +713,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a2a-agent-server" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A2A agent server
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#environment" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -956,17 +945,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a2a-agent-server" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A2A agent server
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#environment" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1087,21 +1065,14 @@ JSON-RPC over stdin/stdout.</p>
 </span></code></pre></div>
 <p>The MCP server listens on port <code>8000</code> (streamable-http) with a <code>/health</code> check.</p>
 <h2 id="docker-compose-mcp-agent">Docker Compose (MCP + Agent)<a class="headerlink" href="#docker-compose-mcp-agent" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/agent.compose.yml<span class="w"> </span>up<span class="w"> </span>-d
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>
 </span></code></pre></div>
-<p>This brings up both the <code>okta-agent-mcp</code> service (port 8000) and the
-<code>okta-agent-agent</code> A2A service (port 9021, AG-UI web interface).</p>
+<p>This brings up both the <code>okta-agent-mcp</code> service (port 8000) and the</p>
 <h2 id="building-the-image">Building the image<a class="headerlink" href="#building-the-image" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>docker/Dockerfile<span class="w"> </span>-t<span class="w"> </span>example/okta-agent:agent-local<span class="w"> </span>.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>
 </span></code></pre></div>
 <p>A <code>docker/debug.Dockerfile</code> is provided for an in-place editable install with
 shell tooling and the Starship prompt.</p>
-<h2 id="a2a-agent-server">A2A agent server<a class="headerlink" href="#a2a-agent-server" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>okta-agent<span class="w">                        </span><span class="c1"># standalone A2A server</span>
-</span></code></pre></div>
-<p>The agent connects to the MCP server via <code>MCP_URL</code>
-(<code>http://okta-agent-mcp:8000/mcp</code> in Compose) and exposes the A2A endpoint and
-AG-UI web interface on its port.</p>
 <h2 id="environment">Environment<a class="headerlink" href="#environment" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1146,9 +1117,9 @@ into the image. Keep <code>OKTA_ALLOW_DESTRUCTIVE=False</code> in shared deploym
 <h2 id="reverse-proxy-dns-caddy-technitium">Reverse proxy + DNS (Caddy + Technitium)<a class="headerlink" href="#reverse-proxy-dns-caddy-technitium" title="Permanent link">&para;</a></h2>
 <p>For fleet deployments, publish the MCP server behind Caddy and register the
 hostname in Technitium DNS:</p>
-<div class="language-caddyfile highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>okta-mcp.example.invalid<span class="w"> </span><span class="p">{</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="k">reverse_proxy</span><span class="w"> </span>okta-agent-mcp:8000
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">}</span>
+<div class="language-caddyfile highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>okta-mcp.example.invalid<span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="k">reverse_proxy</span><span class="w"> </span>okta-agent-mcp:8000
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>Point an <code>A</code> record for <code>okta-mcp.example.invalid</code> at the ingress node in Technitium, then
 use <code>https://okta-mcp.example.invalid/mcp</code> as the client <code>MCP_URL</code> and
