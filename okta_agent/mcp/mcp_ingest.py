@@ -66,7 +66,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
     async def okta_ingest(
         action: str = Field(
             default="all",
-            description=f"What to ingest. One of: {INGEST_ACTIONS}.",
+            description=f"What to ingest. One of: {', '.join(repr(a.strip()) for a in INGEST_ACTIONS.split(','))}.",
         ),
         params_json: str = Field(
             default="{}",
