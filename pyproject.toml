@@ -37,6 +37,10 @@ okta-agent = "okta_agent.connectors"
 [project.entry-points."agent_connector_sdk.prompt_providers"]
 okta-agent = "okta_agent.prompts"
 
+# The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
+[project.entry-points."agent_connector_sdk.connector"]
+okta-mcp = "okta_agent"
+
 [tool.uv.workspace]
 members = ["."]
 

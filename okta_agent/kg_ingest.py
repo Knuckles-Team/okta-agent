@@ -23,7 +23,7 @@ from agent_connector_sdk.ingest import (
 
 logger = logging.getLogger("okta_agent.kg")
 
-_BINDING = IngestBinding(connector="okta-agent", stream="okta")
+_BINDING = IngestBinding(connector="okta-mcp", stream="okta")
 
 _ENTITY_RESERVED_KEYS = frozenset({"id", "node_type"})
 _RELATIONSHIP_RESERVED_KEYS = frozenset({"source", "target", "relationship"})
