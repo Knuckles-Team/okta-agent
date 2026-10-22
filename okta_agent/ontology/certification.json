@@ -1,9 +1,9 @@
 {
   "api_version": "arbora.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "6dbc63ce0c23a07afcd80fe180d50969f9c90f4bd3820e27c3c55b2c6a34a720",
+    "connector_manifest.yml": "925dfcb33f0d898d04dd0cb8c1e9ea2eae09fdc16bbeb75aaab6f2130aea923d",
     "okta_agent/connectors/mcp_source_presets.json": "4a0132dbb843fb4cfee3e4e6de1dcd2d35bbfc42abc666ac90ffe6d27f5bfb52",
-    "okta_agent/connectors/tool_schema_fingerprints.json": "292db47f8fce204a3d5d1f2ed65c97d19d75dffba95a2fa8b4c982f73d7ae717",
+    "okta_agent/connectors/tool_schema_fingerprints.json": "80fd3a828c73329507cc67ba62d4954c9a5a42e9fa1fecc467dbab73a37c3845",
     "okta_agent/ontology/fixtures/records.json": "0849b3680dda8cf73125847171ad29bf4407dd82fdf8301f51f048cd965f16a1",
     "okta_agent/ontology/mappings/source.yaml": "0548b4b55a5a3670c8275673dd7018d117f7d1df4704ef66dab074b744452c11",
     "okta_agent/ontology/migrations/manifest.json": "e9b1f101d12abd2b4562da17899754ea2574b67801f2c929af5085a8194d0b7c",
@@ -22,7 +22,7 @@
     "bundle_schema": "2",
     "epistemic_graph": ">=2.27.0,<3"
   },
-  "connector": "okta-agent",
+  "connector": "okta-mcp",
   "kind": "ConnectorSourceAttestation",
   "live_certified": false,
   "mode": "offline-source",

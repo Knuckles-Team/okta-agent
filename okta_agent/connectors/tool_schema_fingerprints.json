@@ -1,6 +1,6 @@
 {
   "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
-  "connector": "okta-agent",
+  "connector": "okta-mcp",
   "schema_version": "1",
   "tools": {
     "okta_list_apps": "dd142e543ce07cfc0f49e40e088a9148d5c48067636a64856c5c099462f664a2",

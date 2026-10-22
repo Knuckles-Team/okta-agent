@@ -1,4 +1,4 @@
-connector: okta-agent
+connector: okta-mcp
 ontology_source: okta
 schema_version: '1'
 resources:
