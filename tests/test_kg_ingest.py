@@ -70,7 +70,7 @@ async def test_ingest_entities_writes_nodes_and_edges(ingest):
     a_record = next(r for r in request.records if r.record_id == "a")
     assert a_record.payload["name"] == "Ada"
     assert request.relationships[0].relation_reference.endswith(
-        "resources/User/relations/memberOfGroup"
+        "relations/User/memberOfGroup"
     )
 
 
@@ -103,7 +103,7 @@ async def test_ingest_users_maps_user_and_group_edge(ingest):
     assert node.payload["status"] == "ACTIVE"
     assert node.payload["externalToolId"] == "00u1"
     assert request.relationships[0].relation_reference.endswith(
-        "resources/User/relations/memberOfGroup"
+        "relations/User/memberOfGroup"
     )
 
 

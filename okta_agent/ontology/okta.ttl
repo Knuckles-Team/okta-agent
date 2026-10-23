@@ -30,9 +30,8 @@
     rdfs:label "Group Rule" ;
     rdfs:comment "A dynamic-membership rule that assigns users to a Group from an Okta Expression Language condition (okta_groups action=list_rules)." .
 
-:Policy a owl:Class ;
-    rdfs:label "Access Policy" ;
-    rdfs:comment "An Okta policy governing sign-on, password, or MFA enrollment (okta_policies). Carries a type and priority." .
+:Policy a owl:Class .
+
 
 :Factor a owl:Class ;
     rdfs:label "MFA Factor" ;
@@ -155,5 +154,4 @@
     rdfs:comment """Okta enterprise identity model — users, groups, applications, group
     rules, access policies, MFA factors and system-log events, with their membership,
     assignment and governance relationships — federated into the agent-connector-sdk
-    knowledge-graph hub.""" ;
-    owl:imports <http://knuckles.team/kg> .
+    knowledge-graph hub.""" .
