@@ -1,5 +1,5 @@
 schema_version: '1'
-connector: okta-agent
+connector: okta-mcp
 ontology_source: okta
 sync:
 - preset: okta-apps

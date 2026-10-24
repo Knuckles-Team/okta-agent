@@ -12,71 +12,13 @@ import logging
 from typing import Any
 
 from agent_connector_sdk.ingest import (
-    ChangeSet,
-    Entity,
-    IngestBinding,
-    IngestError,
     KnowledgeIngest,
-    Relationship,
-    current_ingest,
+    SourceStream,
 )
 
 logger = logging.getLogger("okta_agent.kg")
 
-_BINDING = IngestBinding(connector="okta-mcp", stream="okta")
-
-_ENTITY_RESERVED_KEYS = frozenset({"id", "node_type"})
-_RELATIONSHIP_RESERVED_KEYS = frozenset({"source", "target", "relationship"})
-
-
-def _to_entity(record: dict[str, Any]) -> Entity:
-    return Entity(
-        id=record.get("id"),
-        node_type=record.get("node_type"),
-        properties={
-            key: value
-            for key, value in record.items()
-            if key not in _ENTITY_RESERVED_KEYS
-        },
-    )
-
-
-def _to_relationship(record: dict[str, Any]) -> Relationship:
-    properties = {
-        key: value
-        for key, value in record.items()
-        if key not in _RELATIONSHIP_RESERVED_KEYS
-    }
-    return Relationship(
-        source=record["source"],
-        target=record["target"],
-        relationship=record["relationship"],
-        properties=properties or None,
-    )
-
-
-async def ingest_entities(
-    entities: list[dict[str, Any]],
-    relationships: list[dict[str, Any]] | None = None,
-    *,
-    ingest: KnowledgeIngest | None = None,
-) -> dict[str, int]:
-    """Write typed OWL nodes (+ edges) into epistemic-graph via the SDK ingest facade.
-
-    Uses canonical ``node_type`` / ``relationship`` structural fields and surfaces
-    a malformed change set or a refused commit as ``IngestError``.
-    """
-    if not entities:
-        raise IngestError("ingest_entities needs at least one entity")
-    change_set = ChangeSet(
-        entities=tuple(_to_entity(entity) for entity in entities),
-        relationships=tuple(
-            _to_relationship(relationship) for relationship in relationships or ()
-        ),
-    )
-    service = ingest or current_ingest()
-    receipt = await service.submit(_BINDING, change_set)
-    return {"nodes": receipt.affected_count, "edges": receipt.relationship_count}
+STREAM = SourceStream.for_package(__package__.split(".")[0], "okta")
 
 
 def _profile(rec: dict[str, Any]) -> dict[str, Any]:
@@ -129,7 +71,7 @@ async def ingest_users(
             continue
         entities.append(_user_entity(uid, user))
         relationships.extend(_user_group_relationships(uid, user))
-    return await ingest_entities(entities, relationships, ingest=ingest)
+    return await STREAM.entities(entities, relationships, ingest=ingest)
 
 
 async def ingest_groups(
@@ -155,7 +97,7 @@ async def ingest_groups(
                 "externalToolId": str(gid),
             }
         )
-    return await ingest_entities(entities, ingest=ingest)
+    return await STREAM.entities(entities, ingest=ingest)
 
 
 async def ingest_apps(
@@ -180,4 +122,4 @@ async def ingest_apps(
                 "externalToolId": str(aid),
             }
         )
-    return await ingest_entities(entities, ingest=ingest)
+    return await STREAM.entities(entities, ingest=ingest)
