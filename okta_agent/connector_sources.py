@@ -7,9 +7,6 @@ Served live as ``connector://resources``. Regenerate by editing the declarations
 from __future__ import annotations
 
 from agent_connector_sdk.ingest.live_declaration import source_meta
-from agent_connector_sdk.ingest.sources import IngestSourceDeclaration, IngestSourceSpec
-
-CONNECTOR = "okta-mcp"
 
 SOURCES = (
     source_meta(
@@ -59,124 +56,52 @@ SOURCES = (
     ),
 )
 
+SCHEMA_VERSION = 2
+
+FIELD_SETS = {
+    "fields_1": {
+        "email": "xsd:string",
+        "eventType": "xsd:string",
+        "externalToolId": "xsd:string",
+        "factorType": "xsd:string",
+        "groupType": "xsd:string",
+        "login": "xsd:string",
+        "outcome": "xsd:string",
+        "policyType": "xsd:string",
+        "priority": "xsd:integer",
+        "provider": "xsd:string",
+        "signOnMode": "xsd:string",
+        "status": "xsd:string",
+    },
+}
+
 SCHEMA_MAPPINGS = {
     "Application": {
-        "fields": {
-            "email": "xsd:string",
-            "eventType": "xsd:string",
-            "externalToolId": "xsd:string",
-            "factorType": "xsd:string",
-            "groupType": "xsd:string",
-            "login": "xsd:string",
-            "outcome": "xsd:string",
-            "policyType": "xsd:string",
-            "priority": "xsd:integer",
-            "provider": "xsd:string",
-            "signOnMode": "xsd:string",
-            "status": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "ApplicationComponent",
     },
     "Factor": {
-        "fields": {
-            "email": "xsd:string",
-            "eventType": "xsd:string",
-            "externalToolId": "xsd:string",
-            "factorType": "xsd:string",
-            "groupType": "xsd:string",
-            "login": "xsd:string",
-            "outcome": "xsd:string",
-            "policyType": "xsd:string",
-            "priority": "xsd:integer",
-            "provider": "xsd:string",
-            "signOnMode": "xsd:string",
-            "status": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "Group": {
-        "fields": {
-            "email": "xsd:string",
-            "eventType": "xsd:string",
-            "externalToolId": "xsd:string",
-            "factorType": "xsd:string",
-            "groupType": "xsd:string",
-            "login": "xsd:string",
-            "outcome": "xsd:string",
-            "policyType": "xsd:string",
-            "priority": "xsd:integer",
-            "provider": "xsd:string",
-            "signOnMode": "xsd:string",
-            "status": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Organization",
     },
     "GroupRule": {
-        "fields": {
-            "email": "xsd:string",
-            "eventType": "xsd:string",
-            "externalToolId": "xsd:string",
-            "factorType": "xsd:string",
-            "groupType": "xsd:string",
-            "login": "xsd:string",
-            "outcome": "xsd:string",
-            "policyType": "xsd:string",
-            "priority": "xsd:integer",
-            "provider": "xsd:string",
-            "signOnMode": "xsd:string",
-            "status": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Organization",
     },
     "LogEvent": {
-        "fields": {
-            "email": "xsd:string",
-            "eventType": "xsd:string",
-            "externalToolId": "xsd:string",
-            "factorType": "xsd:string",
-            "groupType": "xsd:string",
-            "login": "xsd:string",
-            "outcome": "xsd:string",
-            "policyType": "xsd:string",
-            "priority": "xsd:integer",
-            "provider": "xsd:string",
-            "signOnMode": "xsd:string",
-            "status": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Event",
     },
     "Policy": {
-        "fields": {
-            "email": "xsd:string",
-            "eventType": "xsd:string",
-            "externalToolId": "xsd:string",
-            "factorType": "xsd:string",
-            "groupType": "xsd:string",
-            "login": "xsd:string",
-            "outcome": "xsd:string",
-            "policyType": "xsd:string",
-            "priority": "xsd:integer",
-            "provider": "xsd:string",
-            "signOnMode": "xsd:string",
-            "status": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Policy",
     },
     "User": {
-        "fields": {
-            "email": "xsd:string",
-            "eventType": "xsd:string",
-            "externalToolId": "xsd:string",
-            "factorType": "xsd:string",
-            "groupType": "xsd:string",
-            "login": "xsd:string",
-            "outcome": "xsd:string",
-            "policyType": "xsd:string",
-            "priority": "xsd:integer",
-            "provider": "xsd:string",
-            "signOnMode": "xsd:string",
-            "status": "xsd:string",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Person",
     },
 }
@@ -218,22 +143,3 @@ RESOURCES = (
         "name": "User",
     },
 )
-
-
-def declaration() -> IngestSourceDeclaration:
-    """The declaration the server assembles from this module."""
-    specs = []
-    for item in SOURCES:
-        for entry in item["connector_sources"]:
-            body = {k: v for k, v in entry.items() if k not in ("tool", "mapping")}
-            specs.append(
-                IngestSourceSpec.model_validate({**body, "tools": (entry["tool"],)})
-            )
-    return IngestSourceDeclaration.model_validate(
-        {
-            "connector": CONNECTOR,
-            "sources": specs,
-            "schema_mappings": SCHEMA_MAPPINGS,
-            "resources": RESOURCES,
-        }
-    )

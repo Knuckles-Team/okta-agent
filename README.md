@@ -9,8 +9,6 @@
 ![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/okta-agent)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/okta-agent)
 
-*Version: 2.3.4*
-
 > **Documentation** — Installation, deployment, usage across the API, CLI, and MCP
 > server live on the docs site:
 > <https://knuckles-team.github.io/okta-agent/>

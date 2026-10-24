@@ -18,8 +18,8 @@ from agent_connector_sdk.ingest import IngestError, KnowledgeIngest
 from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
 
 from okta_agent.kg_ingest import (
+    STREAM,
     ingest_apps,
-    ingest_entities,
     ingest_groups,
     ingest_users,
 )
@@ -54,7 +54,7 @@ def ingest() -> tuple[KnowledgeIngest, _FakeTransport]:
 @pytest.mark.asyncio
 async def test_ingest_entities_writes_nodes_and_edges(ingest):
     service, transport = ingest
-    res = await ingest_entities(
+    res = await STREAM.entities(
         [
             {"id": "a", "node_type": "User", "name": "Ada"},
             {"id": "b", "node_type": "Group"},
@@ -154,11 +154,11 @@ async def test_ingest_apps_maps_application(ingest):
 async def test_retired_structural_alias_is_rejected(ingest):
     service, _transport = ingest
     with pytest.raises(IngestError, match="node_type"):
-        await ingest_entities([{"id": "a", "type": "User"}], ingest=service)
+        await STREAM.entities([{"id": "a", "type": "User"}], ingest=service)
 
 
 @pytest.mark.asyncio
 async def test_empty_native_ingest_is_rejected(ingest):
     service, _transport = ingest
     with pytest.raises(IngestError, match="at least one entity"):
-        await ingest_entities([], ingest=service)
+        await STREAM.entities([], ingest=service)

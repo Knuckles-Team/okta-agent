@@ -4,7 +4,6 @@ import importlib
 import inspect
 from typing import Any
 
-__version__ = "2.3.4"
 __all__: list[str] = []
 
 CORE_MODULES = [
@@ -92,3 +91,20 @@ def __getattr__(name: str) -> Any:
 
 def __dir__() -> list[str]:
     return sorted(list(globals().keys()) + __all__)
+
+
+from agent_connector_sdk.connector import Connector
+
+from okta_agent.api_client import Api
+from okta_agent.auth import get_client
+
+connector = Connector(
+    api=Api,
+    get_client=get_client,
+    tools="okta_agent.mcp_server",
+    instructions="Okta Agent MCP Server — enterprise CIAM/SSO operations against the Okta Management API (users, groups, apps, policies, system log). Destructive actions require allow_destructive=true.",
+    transports=(
+        "stdio",
+        "streamable-http",
+    ),
+)
