@@ -43,6 +43,11 @@ commercial IdP, so agents can switch identity providers without relearning tools
 
 </div>
 
+## Spec delivery
+
+The [spec delivery dashboard](spec-delivery/) reports the generated delivery
+status for this connector.
+
 ## Quick start
 
 ```bash
