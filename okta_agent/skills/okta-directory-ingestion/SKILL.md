@@ -12,7 +12,7 @@ description: >-
 license: MIT
 tags: [okta, knowledge-graph, ingestion, identity, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # Okta Directory Ingestion

@@ -12,7 +12,7 @@ description: >-
 license: MIT
 tags: [okta, groups, applications, access, sso, rbac, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # Okta Access Management

@@ -2,7 +2,7 @@
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. Nodes use canonical ``node_type``
 and edges use canonical ``relationship``, pushed into the ONE epistemic-graph
-knowledge graph through ``agent_connector_sdk.ingest`` -- the generated ``SourceIngest``
+knowledge graph through ``scion_sdk.ingest`` -- the generated ``SourceIngest``
 client, not a local ingestion helper.
 """
 
@@ -11,7 +11,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from scion_sdk.ingest import (
     KnowledgeIngest,
     SourceStream,
 )

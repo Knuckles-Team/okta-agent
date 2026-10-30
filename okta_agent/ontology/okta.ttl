@@ -153,5 +153,5 @@
     rdfs:label "Okta CIAM/SSO Ontology" ;
     rdfs:comment """Okta enterprise identity model — users, groups, applications, group
     rules, access policies, MFA factors and system-log events, with their membership,
-    assignment and governance relationships — federated into the agent-connector-sdk
+    assignment and governance relationships — federated into the scion-sdk
     knowledge-graph hub.""" .
