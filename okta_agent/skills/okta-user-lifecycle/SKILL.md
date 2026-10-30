@@ -12,7 +12,7 @@ description: >-
 license: MIT
 tags: [okta, identity, ciam, lifecycle, users, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # Okta User Lifecycle

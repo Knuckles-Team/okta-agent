@@ -10,7 +10,7 @@ license: MIT
 tags: [okta, development, connector, test, gates]
 tier: repository
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 
@@ -18,7 +18,7 @@ metadata:
 
 This repository owns the Okta Management API transport, mappings, MCP tools, and
 packaged connector content. Shared connector contracts and transports belong to
-`agent-connector-sdk`; admission, serving, and durable graph state belong to
+`scion-sdk`; admission, serving, and durable graph state belong to
 their owning repositories. Read `AGENTS.md` before changing code and keep
 provider credentials, customer data, and private endpoints out of source,
 logs, and skill content.
