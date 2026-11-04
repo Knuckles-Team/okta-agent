@@ -1,7 +1,7 @@
 """Epistemic-graph ingestion for Okta identity records.
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. Nodes use canonical ``node_type``
-and edges use canonical ``relationship``, pushed into the ONE epistemic-graph
+and edges use canonical ``relationship``, pushed into the ONE medulla
 knowledge graph through ``scion_sdk.ingest`` -- the generated ``SourceIngest``
 client, not a local ingestion helper.
 """

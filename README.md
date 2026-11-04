@@ -57,7 +57,7 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `okta-agent[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `okta-agent[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `medulla`) | The operator only run the **MCP server** (smallest install / image) |
 | `okta-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ### Container images (`:mcp`)
@@ -72,14 +72,14 @@ One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
 
 agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
-### Knowledge-graph database (`epistemic-graph`)
+### Knowledge-graph database (`medulla`)
 
-Scion SDK core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
+Scion SDK core dependency (`medulla`). The `[mcp]` extra keeps
 deployments can use the bundled engine. For production or shared state, run
-**epistemic-graph as a dedicated database service** and configure the runtime to use it.
+**medulla as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
 diagrams are documented in the
-[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
 
 ## Configure
 
@@ -220,7 +220,7 @@ and (where applicable) `allow_destructive`.
 |----------|----------------|-------------|
 | `okta_apps` | `APPSTOOL` | Manage Okta applications — CRUD, lifecycle, and user/group assignments. |
 | `okta_groups` | `GROUPSTOOL` | Manage Okta groups — CRUD, membership, and dynamic group rules. |
-| `okta_ingest` | `INGESTTOOL` | Natively ingest Okta users/groups/apps into epistemic-graph as typed nodes. |
+| `okta_ingest` | `INGESTTOOL` | Natively ingest Okta users/groups/apps into medulla as typed nodes. |
 | `okta_policies` | `POLICIESTOOL` | Inspect Okta policies and toggle policy/rule lifecycle. |
 | `okta_system` | `SYSTEMTOOL` | Inspect the Okta org — settings, auth servers, system log, authenticators, zones. |
 | `okta_users` | `USERSTOOL` | Manage Okta users — lifecycle, credentials, groups/apps/factors, sessions. |
