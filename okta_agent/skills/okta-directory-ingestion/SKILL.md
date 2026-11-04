@@ -3,7 +3,7 @@ name: okta-directory-ingestion
 skill_type: skill
 description: >-
   Natively mirror the Okta directory (users, groups, applications) into the
-  epistemic-graph knowledge graph as typed OWL nodes via the okta-agent MCP
+  medulla knowledge graph as typed OWL nodes via the okta-agent MCP
   server. Use when the agent must ingest or refresh Okta identities/groups/apps
   in the KG so they can be queried, related, and reasoned over alongside the rest
   of the ecosystem. Do NOT use for live user lifecycle (okta-user-lifecycle) or
@@ -18,7 +18,7 @@ metadata:
 # Okta Directory Ingestion
 
 The native "maximum ingestion" path for the Okta connector: list the directory
-via the Okta Management API and push it into the ONE epistemic-graph knowledge
+via the Okta Management API and push it into the ONE medulla knowledge
 graph as typed nodes — `:User`, `:Group`, `:Application` — carrying provenance
 (`source=okta-agent`, `domain=okta`). Best-effort and engine-guarded: it no-ops
 cleanly when no graph engine is reachable.
@@ -37,7 +37,7 @@ cleanly when no graph engine is reachable.
 ## Prerequisites & environment
 Connect via the `mcp-client` skill against the **`okta-agent`** MCP server. Needs
 the same `OKTA_ORG_URL` + `OKTA_API_TOKEN` (or OAuth) credentials as the other
-Okta skills, plus a reachable epistemic-graph engine for the write to land
+Okta skills, plus a reachable medulla engine for the write to land
 (otherwise `ingested` comes back `null`).
 
 ## Tools & actions

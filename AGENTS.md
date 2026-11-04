@@ -84,7 +84,7 @@ pytest -v
 | `CONCEPT:OK-OS.identity.default` | Safety Gating & Redaction | `allow_destructive` gate (default false) + secret redaction |
 | `CONCEPT:OK-OS.governance.okta-3` | SCIM Filter Building | Escaped, structured `filter` expression construction |
 | `CONCEPT:AU-ECO.messaging.native-backend-abstraction` | Ecosystem Compliance | Multi-package integration compliance standard |
-| `CONCEPT:AU-KG.ingest.enterprise-source-extractor` | Native KG Ingestion | Governed, typed Okta identity ingestion into epistemic-graph |
+| `CONCEPT:AU-KG.ingest.enterprise-source-extractor` | Native KG Ingestion | Governed, typed Okta identity ingestion into medulla |
 | `CONCEPT:AU-KG.ontology.federation-provider-leg` | Ontology Federation | Okta ontology contribution federated into the shared KG |
 
 ## Domain Rules
@@ -234,7 +234,7 @@ Working in parallel with other sessions/worktrees? **Reserve a concept id before
 scion-sdk --json concept reserve --ns EG-KG.compute.backend   # or a package prefix, e.g. KEY
 ```
 
-Full protocol (ledger, merge=union, reconcile, MCP/REST): <https://knuckles-team.github.io/agent-connector-sdk/concept_coordination/>
+Full protocol (ledger, merge=union, reconcile, MCP/REST): <https://knuckles-team.github.io/scion-sdk/concept_coordination/>
 <!-- END concept-coordination (generated) -->
 
 ## Version & lockfile drift edict (keep the version mirrors AND the lock in sync)

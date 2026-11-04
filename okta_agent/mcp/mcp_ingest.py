@@ -1,7 +1,7 @@
 """CONCEPT:AU-KG.ingest.enterprise-source-extractor Native KG ingestion tool for Okta.
 
 Wire-First: lists real Okta objects via the authenticated :class:`~okta_agent.api_client.Api`
-client and pushes them into the ONE epistemic-graph knowledge graph as typed OWL nodes
+client and pushes them into the ONE medulla knowledge graph as typed OWL nodes
 (``:User`` / ``:Group`` / ``:Application``) via :mod:`okta_agent.kg_ingest`. Best-effort —
 returns ``{"ingested": None}`` when no engine is reachable, so the connector still runs with
 zero KG infrastructure.
@@ -77,7 +77,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
             ),
         ),
     ) -> Any:
-        """Natively ingest Okta users/groups/apps into epistemic-graph as typed nodes.
+        """Natively ingest Okta users/groups/apps into medulla as typed nodes.
 
         Lists the requested objects via the Okta Management API and pushes them
         (``:User`` / ``:Group`` / ``:Application`` with their provenance) into the
