@@ -27,7 +27,7 @@ This file acts as a machine-readable README for AI coding agents collaborating o
   - `okta_agent/api_client.py`: API facade composing the domain modules.
   - `okta_agent/auth.py`: Credentials loading (SSWS / private-key-JWT) and client builder.
   - `okta_agent/api/api_client_base.py`: rate limits, 429 backoff, pagination, error mapping, redaction.
-  - `okta_agent/api/api_client_base.py` `_require_destructive`: the destructive-operation gate (per-call `allow_destructive` or `OKTA_ALLOW_DESTRUCTIVE`).
+  - Destructive operations carry `@destructive_operation` from the SDK; the SDK asks the caller to confirm (per-call `confirm`, or `SCION_ALLOW_DESTRUCTIVE` for unattended use).
 
 ### Architecture Diagram
 
@@ -81,7 +81,7 @@ pytest -v
 | `CONCEPT:OK-OS.governance.okta` | Core API Client Operations | Raw httpx Okta client: rate limits, backoff, pagination, error mapping |
 | `CONCEPT:OK-OS.identity.okta` | Credential Strategies | SSWS token + OAuth2 private-key-JWT (Okta API scopes) |
 | `CONCEPT:OK-OS.governance.okta-2` | FastMCP Tools Execution | Action-routed users/groups/apps/policies/system tools |
-| `CONCEPT:OK-OS.identity.default` | Safety Gating & Redaction | `allow_destructive` gate (default false) + secret redaction |
+| `CONCEPT:OK-OS.identity.default` | Safety Gating & Redaction | SDK destructive declaration and `confirm` guard + secret redaction |
 | `CONCEPT:OK-OS.governance.okta-3` | SCIM Filter Building | Escaped, structured `filter` expression construction |
 | `CONCEPT:AU-ECO.messaging.native-backend-abstraction` | Ecosystem Compliance | Multi-package integration compliance standard |
 | `CONCEPT:AU-KG.ingest.enterprise-source-extractor` | Native KG Ingestion | Governed, typed Okta identity ingestion into medulla |

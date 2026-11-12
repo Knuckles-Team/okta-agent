@@ -26,7 +26,6 @@ Connect via the `mcp-client` skill against the **`okta-agent`** MCP server.
 |----------|----------|-------|
 | `OKTA_ORG_URL` | ✅ | Org base URL, e.g. `[configured-endpoint]` |
 | `OKTA_API_TOKEN` | ✅ | SSWS API token (or OAuth client creds) |
-| `OKTA_ALLOW_DESTRUCTIVE` | optional | Default gate for destructive operations (e.g. `okta_delete_group`) |
 
 ## Tools
 | Tool | Purpose |
@@ -45,8 +44,8 @@ Connect via the `mcp-client` skill against the **`okta-agent`** MCP server.
 | `okta_list_app_groups`, `okta_assign_group_to_app` | Group assignments |
 | `okta_unassign_group_from_app` | Remove a group assignment (destructive) |
 
-Destructive tools refuse to run unless called with `allow_destructive=true` or
-`OKTA_ALLOW_DESTRUCTIVE=True` is set.
+Destructive tools refuse to run unless called with `confirm=true` or
+the operator sets `SCION_ALLOW_DESTRUCTIVE=true`.
 
 ### Key parameters
 - `group_id` / `app_id` — required for read, membership, and assignment tools.
@@ -63,7 +62,7 @@ Assign a group to an application (`okta_assign_group_to_app`): `app_id` = `0oa1a
 
 ## Gotchas
 - Group `delete` and `remove_member`/`unassign_*` are effectively access-revoking —
-  `delete` is gated by `allow_destructive`; verify the group is not app-linked first.
+  `delete` needs confirmation; verify the group is not app-linked first.
 - A newly created **group rule** is INACTIVE until you call `activate_rule`; users are
   only assigned while the rule is ACTIVE.
 - Dynamic-rule-managed membership cannot be edited by hand — `remove_member` on a

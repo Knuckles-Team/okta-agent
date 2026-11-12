@@ -96,7 +96,7 @@ export OKTA_SCOPES="okta.users.read okta.groups.manage"
 ```
 
 See `.env.example` for every knob (`OKTA_TLS_PROFILE`, `OKTA_MAX_RETRIES`,
-`OKTA_BACKOFF_CAP_SECONDS`, `OKTA_ALLOW_DESTRUCTIVE`, per-tool switches).
+`OKTA_BACKOFF_CAP_SECONDS`, per-tool switches).
 
 ## Environment Variables
 
@@ -129,7 +129,6 @@ See `.env.example` for every knob (`OKTA_TLS_PROFILE`, `OKTA_MAX_RETRIES`,
 | `OKTA_TLS_PROFILE_REF` | — |  |
 | `OKTA_MAX_RETRIES` | `2` | 429 handling: retry attempts and backoff cap (seconds) |
 | `OKTA_BACKOFF_CAP_SECONDS` | `60` |  |
-| `OKTA_ALLOW_DESTRUCTIVE` | `False` | Safety: org-wide default for destructive tool actions (deactivate/delete/clear-sessions/password ops). Per-call allow_destructive=true also works; default is blocked. |
 | `USERSTOOL` | `True` | Tool registration switches |
 | `GROUPSTOOL` | `True` |  |
 | `APPSTOOL` | `True` |  |
@@ -171,7 +170,6 @@ _30 package + 16 inherited variable(s). Auto-generated from `.env.example` + the
 | `OKTA_TLS_PROFILE` | `system` | Named outbound TLS policy from AgentConfig |
 | `OKTA_MAX_RETRIES` | `2` | 429 retry attempts |
 | `OKTA_BACKOFF_CAP_SECONDS` | `60` | 429 backoff cap |
-| `OKTA_ALLOW_DESTRUCTIVE` | `False` | Org-wide default for destructive tool actions |
 | `HOST` / `PORT` / `TRANSPORT` | `0.0.0.0` / `8000` / `stdio` | MCP server bind + transport |
 | `USERSTOOL` / `GROUPSTOOL` / `APPSTOOL` / `POLICIESTOOL` / `SYSTEMTOOL` | `True` | Per-domain tool toggles |
 | `ENABLE_OTEL` / `OTEL_EXPORTER_OTLP_*` | — | Telemetry (OTEL / Langfuse) |
@@ -206,7 +204,7 @@ okta-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 
 ## MCP Tools
 
-One typed tool per Okta operation, named `okta_<operation>` (`okta_list_users`, `okta_create_group`, `okta_get_system_log`, ...), plus four graph-ingest tools. No tool takes an `action`. Destructive operations (deactivate, suspend, delete, remove, expire or reset password, clear sessions) take `allow_destructive` and refuse to run unless it is true or `OKTA_ALLOW_DESTRUCTIVE` is set.
+One typed tool per Okta operation, named `okta_<operation>` (`okta_list_users`, `okta_create_group`, `okta_get_system_log`, ...), plus four graph-ingest tools. No tool takes an `action`. Destructive operations (deactivate, suspend, delete, remove, expire or reset password, clear sessions) ask the caller to confirm (`confirm=true`, or the operator sets `SCION_ALLOW_DESTRUCTIVE=true`) and refuse to run otherwise.
 
 | Area | Tools |
 |------|-------|
@@ -226,7 +224,7 @@ Search users (`okta_search_users`): `conditions` = `[{"field": "status", "op": "
 
 Create an OIDC app (`okta_create_app`): `template` = `oidc`, `label` = `My App`, `settings` = `{"redirect_uris": ["https://app.example.com/cb"]}`.
 
-Deactivate a user (`okta_deactivate_user`): `user_id` = `00u1`, `allow_destructive` = true.
+Deactivate a user (`okta_deactivate_user`): `user_id` = `00u1`, `confirm` = true.
 
 Every successful response is an envelope:
 

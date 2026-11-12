@@ -48,7 +48,7 @@ def test_development_skill_has_real_delivery_contract_and_actual_tests():
         assert test_path in content
         assert (ROOT / test_path).exists()
     assert "httpx.MockTransport" in content
-    assert "allow_destructive" in content
+    assert "destructive declaration" in content
 
 
 def test_packaged_skill_and_version_lock_are_coherent():

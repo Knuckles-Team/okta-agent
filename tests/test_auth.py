@@ -3,7 +3,7 @@
 import pytest
 
 from okta_agent.api.credentials import NoCredential, PrivateKeyJwt, SswsToken
-from okta_agent.auth import allow_destructive_default, get_client
+from okta_agent.auth import get_client
 
 # Assembled at runtime so secret scanners do not match a key-block literal.
 FAKE_PEM = "-----BEGIN " + "PRIVATE KEY-----\nMIIfake\n-----END " + "PRIVATE KEY-----\n"
@@ -59,13 +59,3 @@ class TestGetClient:
         assert client.org_url == "https://localhost"
         assert client.max_retries == 2
         assert client.backoff_cap == 60.0
-
-
-@pytest.mark.concept("OK-OS.identity.default")
-class TestAllowDestructiveDefault:
-    def test_blocked_by_default(self):
-        assert allow_destructive_default() is False
-
-    def test_env_enables(self, monkeypatch):
-        monkeypatch.setenv("OKTA_ALLOW_DESTRUCTIVE", "True")
-        assert allow_destructive_default() is True

@@ -59,7 +59,7 @@ uv run --all-extras pytest tests/test_startup.py tests/test_destructive_gate.py 
 The external Okta API is never called by local tests. Use `httpx.MockTransport`
 and keep credentials out of fixtures. Preserve SSWS and private-key-JWT auth,
 credential redaction, rate-limit snapshots, cursor pagination, and the
-`allow_destructive` safety gate when changing the client or tools.
+destructive declaration and `confirm` guard when changing the client or tools.
 
 ## Packaging and publication
 

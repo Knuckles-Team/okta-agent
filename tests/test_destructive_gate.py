@@ -1,92 +1,84 @@
-"""CONCEPT:OK-OS.identity.default Destructive operations are gated on the client and served as typed tools."""
+"""CONCEPT:OK-OS.identity.default Destructive operations use the SDK's one declaration and guard."""
 
 import asyncio
 from unittest.mock import patch
 
+import httpx
 import pytest
 from fastmcp import Client
 from scion_sdk.connector import build_server
 
-from okta_agent.api.api_client_base import DestructiveBlockedError
 from tests.conftest import RequestRecorder, json_response
 
-DESTRUCTIVE_CALLS = [
-    ("deactivate_user", ("u1",)),
-    ("suspend_user", ("u1",)),
-    ("expire_password", ("u1",)),
-    ("reset_password", ("u1",)),
-    ("clear_user_sessions", ("u1",)),
-    ("delete_group", ("g1",)),
-    ("remove_group_member", ("g1", "u1")),
-    ("deactivate_group_rule", ("r1",)),
-    ("deactivate_app", ("a1",)),
-    ("unassign_user_from_app", ("a1", "u1")),
-    ("unassign_group_from_app", ("a1", "g1")),
-    ("deactivate_policy", ("p1",)),
-    ("deactivate_policy_rule", ("p1", "r1")),
-]
+DESTRUCTIVE_TOOLS = {
+    "okta_deactivate_user": {"user_id": "u1"},
+    "okta_suspend_user": {"user_id": "u1"},
+    "okta_expire_password": {"user_id": "u1"},
+    "okta_reset_password": {"user_id": "u1"},
+    "okta_clear_user_sessions": {"user_id": "u1"},
+    "okta_delete_group": {"group_id": "g1"},
+    "okta_remove_group_member": {"group_id": "g1", "user_id": "u1"},
+    "okta_deactivate_group_rule": {"rule_id": "r1"},
+    "okta_deactivate_app": {"app_id": "a1"},
+    "okta_unassign_user_from_app": {"app_id": "a1", "user_id": "u1"},
+    "okta_unassign_group_from_app": {"app_id": "a1", "group_id": "g1"},
+    "okta_deactivate_policy": {"policy_id": "p1"},
+    "okta_deactivate_policy_rule": {"policy_id": "p1", "rule_id": "r1"},
+}
+
+
+def _server(recorder: RequestRecorder, monkeypatch):
+    real = httpx.Client
+
+    def client(*args, **kwargs):
+        kwargs["transport"] = httpx.MockTransport(recorder)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr("okta_agent.api.api_client_base.httpx.Client", client)
+    monkeypatch.setenv("OKTA_ORG_URL", "https://example.okta.com")
+    monkeypatch.setenv("OKTA_API_TOKEN", "x")
+    with patch("sys.argv", ["okta-mcp"]):
+        return build_server("okta_agent", command_args=[])[1]
 
 
 @pytest.mark.concept("OK-OS.identity.default")
-@pytest.mark.parametrize(("method", "args"), DESTRUCTIVE_CALLS)
-def test_destructive_operation_is_blocked_by_default(make_api, method, args):
+@pytest.mark.spec("CONN-OKTA-AGENT-CONNECTOR-CONTENT-R002")
+def test_declared_operations_are_destructive_tools_that_ask_first(monkeypatch):
+    monkeypatch.delenv("SCION_ALLOW_DESTRUCTIVE", raising=False)
     recorder = RequestRecorder(lambda request: json_response({}))
-    api = make_api(recorder)
-    with pytest.raises(DestructiveBlockedError, match="allow_destructive"):
-        getattr(api, method)(*args)
-    assert recorder.requests == []
+    mcp = _server(recorder, monkeypatch)
 
-
-@pytest.mark.concept("OK-OS.identity.default")
-@pytest.mark.parametrize(("method", "args"), DESTRUCTIVE_CALLS)
-def test_per_call_flag_allows_the_operation(make_api, method, args):
-    recorder = RequestRecorder(lambda request: json_response({}))
-    api = make_api(recorder)
-    getattr(api, method)(*args, allow_destructive=True)
-    assert len(recorder.requests) == 1
-
-
-@pytest.mark.concept("OK-OS.identity.default")
-def test_environment_default_allows_the_operation(make_api, monkeypatch):
-    monkeypatch.setenv("OKTA_ALLOW_DESTRUCTIVE", "True")
-    recorder = RequestRecorder(lambda request: json_response({}))
-    make_api(recorder).deactivate_user("u1")
-    assert len(recorder.requests) == 1
-
-
-@pytest.mark.concept("OK-OS.identity.default")
-def test_non_destructive_operation_needs_no_flag(make_api):
-    recorder = RequestRecorder(lambda request: json_response({"id": "u1"}))
-    make_api(recorder).get_user("u1")
-    assert len(recorder.requests) == 1
-
-
-@pytest.mark.concept("OK-OS.governance.okta-2")
-def test_served_surface_is_typed_and_names_the_gate():
-    with (
-        patch.dict(
-            "os.environ",
-            {"OKTA_ORG_URL": "https://example.okta.com", "OKTA_API_TOKEN": "x"},
-        ),
-        patch("sys.argv", ["okta-mcp"]),
-    ):
-        mcp = build_server("okta_agent", command_args=[])[1]
-
-    async def _list():
+    async def _run():
         async with Client(mcp) as client:
-            return await client.list_tools()
+            tools = {t.name: t for t in await client.list_tools()}
+            for name in DESTRUCTIVE_TOOLS:
+                tool = tools[name]
+                assert tool.annotations.destructive_hint is True, name
+                properties = tool.input_schema["properties"]
+                assert "confirm" in properties and "allow_destructive" not in properties
+            assert tools["okta_get_user"].annotations.destructive_hint is False
+            return client
 
-    tools = {t.name: t for t in asyncio.run(_list())}
-    assert "okta_deactivate_user" in tools
-    assert (
-        "allow_destructive" in tools["okta_deactivate_user"].inputSchema["properties"]
-    )
-    assert not {
-        "okta_users",
-        "okta_groups",
-        "okta_apps",
-        "okta_policies",
-        "okta_system",
-    } & set(tools)
-    for tool in tools.values():
-        assert "action" not in (tool.inputSchema.get("properties") or {})
+    asyncio.run(_run())
+
+
+@pytest.mark.concept("OK-OS.identity.default")
+@pytest.mark.spec("CONN-OKTA-AGENT-CONNECTOR-CONTENT-R002")
+@pytest.mark.parametrize("name", sorted(DESTRUCTIVE_TOOLS))
+def test_unconfirmed_call_sends_no_request_and_confirmed_call_sends_one(
+    name, monkeypatch
+):
+    monkeypatch.delenv("SCION_ALLOW_DESTRUCTIVE", raising=False)
+    recorder = RequestRecorder(lambda request: json_response({}))
+    mcp = _server(recorder, monkeypatch)
+    arguments = DESTRUCTIVE_TOOLS[name]
+
+    async def _run():
+        async with Client(mcp) as client:
+            refused = await client.call_tool(name, arguments)
+            assert refused.structured_content["cancelled"] is True
+            assert recorder.requests == []
+            await client.call_tool(name, {**arguments, "confirm": True})
+
+    asyncio.run(_run())
+    assert len(recorder.requests) == 1
