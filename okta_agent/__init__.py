@@ -7,7 +7,6 @@ from typing import Any
 __all__: list[str] = []
 
 CORE_MODULES = [
-    "okta_agent.okta_input_models",
     "okta_agent.okta_response_models",
     "okta_agent.api_client",
 ]
@@ -102,7 +101,7 @@ connector = Connector(
     api=Api,
     get_client=get_client,
     tools="okta_agent.mcp_server",
-    instructions="Okta Agent MCP Server — enterprise CIAM/SSO operations against the Okta Management API (users, groups, apps, policies, system log). Destructive actions require allow_destructive=true.",
+    instructions="Okta Agent MCP Server — enterprise CIAM/SSO operations against the Okta Management API (users, groups, apps, policies, system log). Destructive operations take allow_destructive=true (or OKTA_ALLOW_DESTRUCTIVE=True).",
     transports=(
         "stdio",
         "streamable-http",

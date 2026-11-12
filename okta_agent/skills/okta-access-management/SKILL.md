@@ -19,7 +19,7 @@ metadata:
 
 Domain-typed access to the Okta **Groups**, **Group Rules** and **Applications**
 APIs for access administration — the join between identities and the resources
-they can reach. Prefer the `okta_groups` and `okta_apps` action-routed tools.
+they can reach. Prefer the typed group and application tools.
 
 ## When to use
 - Create/read/update/delete groups; list or change membership.
@@ -29,7 +29,7 @@ they can reach. Prefer the `okta_groups` and `okta_apps` action-routed tools.
 
 ## When NOT to use
 - User profile CRUD, lifecycle, credentials, or MFA factors → `okta-user-lifecycle`.
-- Sign-on / password / MFA-enroll **policies** → the `okta_policies` tool.
+- Sign-on / password / MFA-enroll **policies** → the `okta_list_policies` and `okta_get_policy` tools.
 - Bulk mirroring of directory objects into the KG → `okta-directory-ingestion`.
 
 ## Prerequisites & environment
@@ -39,38 +39,42 @@ Connect via the `mcp-client` skill against the **`okta-agent`** MCP server.
 |----------|----------|-------|
 | `OKTA_ORG_URL` | ✅ | Org base URL, e.g. `https://acme.okta.com` |
 | `OKTA_API_TOKEN` | ✅ | SSWS API token (or OAuth client creds) |
-| `OKTA_ALLOW_DESTRUCTIVE` | optional | Default gate for destructive actions (e.g. group `delete`) |
+| `OKTA_ALLOW_DESTRUCTIVE` | optional | Default gate for destructive operations (e.g. `okta_delete_group`) |
 
-## Tools & actions
-Prefer the **condensed** tools; each takes `action` + a `params_json` **JSON string**.
+## Tools
+| Tool | Purpose |
+|------|---------|
+| `okta_list_groups`, `okta_search_groups`, `okta_get_group` | Find and read groups |
+| `okta_create_group`, `okta_update_group` | Create or rename a group |
+| `okta_delete_group` | Delete a group (destructive) |
+| `okta_list_group_members`, `okta_add_group_member` | Read or extend membership |
+| `okta_remove_group_member` | Remove a member (destructive) |
+| `okta_list_group_rules`, `okta_create_group_rule`, `okta_activate_group_rule` | Dynamic membership rules |
+| `okta_deactivate_group_rule` | Deactivate a rule (destructive) |
+| `okta_list_apps`, `okta_get_app`, `okta_create_app`, `okta_update_app`, `okta_activate_app` | Application integrations |
+| `okta_deactivate_app` | Deactivate an application (destructive) |
+| `okta_list_app_users`, `okta_assign_user_to_app` | User assignments |
+| `okta_unassign_user_from_app` | Remove a user assignment (destructive) |
+| `okta_list_app_groups`, `okta_assign_group_to_app` | Group assignments |
+| `okta_unassign_group_from_app` | Remove a group assignment (destructive) |
 
-| Condensed tool | Actions |
-|----------------|---------|
-| `okta_groups` | `list`, `search`, `get`, `create`, `update`, `delete`, `list_members`, `add_member`, `remove_member`, `list_rules`, `create_rule`, `activate_rule`, `deactivate_rule` |
-| `okta_apps` | `list`, `get`, `create`, `update`, `activate`, `deactivate`, `list_users`, `assign_user`, `unassign_user`, `list_groups`, `assign_group`, `unassign_group` |
+Destructive tools refuse to run unless called with `allow_destructive=true` or
+`OKTA_ALLOW_DESTRUCTIVE=True` is set.
 
 ### Key parameters
-- `group_id` / `app_id` — required for read, membership, and assignment actions.
-- `user_id` — for `add_member`/`remove_member` and app `assign_user`/`unassign_user`.
-- `name` / `description` — for group `create`; `expression` + `name` for `create_rule`.
-- `rule_id` — for `activate_rule` / `deactivate_rule`.
+- `group_id` / `app_id` — required for read, membership, and assignment tools.
+- `user_id` — for `okta_add_group_member`, `okta_remove_group_member`, and the user assignment tools.
+- `name` / `description` — for `okta_create_group`; `name`, `expression` and `assign_group_ids` for `okta_create_group_rule`.
+- `rule_id` — for the rule activation tools.
 
-## Recipes (`params_json`)
-Add a user to a group:
-```json
-{"group_id":"00g1abc...","user_id":"00u1xyz..."}
-```
-Create a dynamic group rule (all users in the `engineering` department):
-```json
-{"name":"eng-auto","group_ids":["00g1eng..."],"expression":"user.department==\"engineering\""}
-```
-Assign a group to an application:
-```json
-{"app_id":"0oa1app...","group_id":"00g1eng..."}
-```
+## Recipes
+Add a user to a group (`okta_add_group_member`): `group_id` = `00g1abc...`, `user_id` = `00u1xyz...`.
+
+Create a dynamic group rule (`okta_create_group_rule`): `name` = `eng-auto`, `assign_group_ids` = `["00g1eng..."]`, `expression` = `user.department=="engineering"`; then `okta_activate_group_rule` with the returned `rule_id`.
+
+Assign a group to an application (`okta_assign_group_to_app`): `app_id` = `0oa1app...`, `group_id` = `00g1eng...`.
 
 ## Gotchas
-- `params_json` is a **string** of JSON, not an object — serialize it.
 - Group `delete` and `remove_member`/`unassign_*` are effectively access-revoking —
   `delete` is gated by `allow_destructive`; verify the group is not app-linked first.
 - A newly created **group rule** is INACTIVE until you call `activate_rule`; users are

@@ -1,6 +1,6 @@
 # okta-agent
 
-action-routed connector for the Okta Management API (users, groups, applications,
+typed connector for the Okta Management API (users, groups, applications,
 policies, and the system log).
 
 !!! info "Official documentation"
@@ -20,9 +20,8 @@ policies, and the system log).
   mixins. Raw `httpx`, no Okta SDK; every method documents the
   `developer.okta.com` endpoint it calls, captures the latest `X-Rate-Limit-*`
   snapshot, and backs off automatically on HTTP 429.
-- **Action-routed MCP tools** — consolidated, togglable tool modules (`okta_users`,
-  `okta_groups`, `okta_apps`, `okta_policies`, `okta_system`) that minimize token
-  overhead in LLM contexts.
+- **Typed MCP tools** — one tool per Okta operation (`okta_list_users`,
+  `okta_create_group`, `okta_get_system_log`, ...), each with typed arguments.
 
 Safety is built in: destructive operations (deactivate / delete / clear sessions /
 password ops) are blocked unless explicitly allowed per call or via
@@ -38,7 +37,7 @@ commercial IdP, so agents can switch identity providers without relearning tools
 
 - :material-rocket-start: **[Installation](installation.md)** — pip, source, extras, and the prebuilt Docker image.
 - :material-console: **[Usage](usage.md)** — the MCP tools, the `Api` client, and the CLI.
-- :material-sitemap: **[Overview](overview.md)** — the action-routed tool surface and architecture.
+- :material-sitemap: **[Overview](overview.md)** — the typed tool surface and architecture.
 - :material-tag-multiple: **[Concepts](concepts.md)** — the `CONCEPT:OKTA-*` registry.
 
 </div>

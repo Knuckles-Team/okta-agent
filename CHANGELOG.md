@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.9] - 2026-11-12
+
+### Removed
+- The five action-routed tool modules (`okta_users`, `okta_groups`, `okta_apps`, `okta_policies`, `okta_system`), the action-routed `okta_ingest` tool, and the `okta_input_models` module that mirrored their `params_json` payloads. Every action is a typed per-operation tool (`okta_list_users`, `okta_create_group`, `okta_get_system_log`, ...); the ingest is now four typed tools: `okta_ingest_users`, `okta_ingest_groups`, `okta_ingest_apps`, `okta_ingest_all`.
+
+### Changed
+- The destructive-operation gate moved from the action routers into the client. The thirteen destructive operations (`okta_deactivate_user`, `okta_suspend_user`, `okta_expire_password`, `okta_reset_password`, `okta_clear_user_sessions`, `okta_delete_group`, `okta_remove_group_member`, `okta_deactivate_group_rule`, `okta_deactivate_app`, `okta_unassign_user_from_app`, `okta_unassign_group_from_app`, `okta_deactivate_policy`, `okta_deactivate_policy_rule`) now take `allow_destructive` and refuse to run unless it is true or `OKTA_ALLOW_DESTRUCTIVE` is on. Before this change the typed tools were not gated.
+- Connector surface: tool-use contracts, links, data locations, business roles, an operator prompt and three business-role prompts, ontology classes rooted in core classes, skills rewritten for the typed tools, scion-sdk 0.9.
+
 ## [2.3.8] - 2026-10-30
 
 ### Changed

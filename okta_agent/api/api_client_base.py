@@ -26,6 +26,7 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 import httpx
+from scion_sdk.config import setting
 from scion_sdk.tls.profile import ResolvedTLSProfile
 from scion_sdk.tls.resolve import resolve_tls_profile
 
@@ -92,6 +93,10 @@ class OktaApiError(Exception):
         }
 
 
+class DestructiveBlockedError(PermissionError):
+    """A destructive operation was called without consent (CONCEPT:OK-OS.identity.default)."""
+
+
 class ApiClientBase:
     """Raw httpx client for one Okta org (no Okta SDK)."""
 
@@ -117,6 +122,23 @@ class ApiClientBase:
             timeout=timeout,
             transport=transport,
             **self.tls_profile.httpx_kwargs(),
+        )
+
+    # ------------------------------------------------------------------ #
+    # Destructive-operation gate
+    # ------------------------------------------------------------------ #
+
+    def _require_destructive(self, operation: str, allow_destructive: bool) -> None:
+        """CONCEPT:OK-OS.identity.default Gate a destructive operation behind explicit consent.
+
+        The call proceeds only when the per-call ``allow_destructive`` argument is
+        true or the ``OKTA_ALLOW_DESTRUCTIVE`` environment default is on.
+        """
+        if allow_destructive or setting("OKTA_ALLOW_DESTRUCTIVE", False):
+            return
+        raise DestructiveBlockedError(
+            f"Operation {operation!r} is destructive and blocked by default. "
+            "Call it with allow_destructive=true (or set OKTA_ALLOW_DESTRUCTIVE=True) to confirm."
         )
 
     # ------------------------------------------------------------------ #

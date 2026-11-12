@@ -77,8 +77,13 @@ def make_api():
 
 
 @pytest.fixture
-def recorded_api(make_api):
-    """An Api whose handler echoes ``{}`` and records all requests."""
+def recorded_api(make_api, monkeypatch):
+    """An Api whose handler echoes ``{}`` and records all requests.
+
+    The destructive-operation gate is open here so client tests can exercise every
+    endpoint; ``tests/test_destructive_gate.py`` covers the gate itself.
+    """
+    monkeypatch.setenv("OKTA_ALLOW_DESTRUCTIVE", "True")
     recorder = RequestRecorder(lambda request: json_response({}))
     return make_api(recorder), recorder
 

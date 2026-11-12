@@ -30,8 +30,8 @@ owning spec row in the commit trailer.
 
 - Find the owning row first with `git grep -n "<term>" -- specs` and extend the
   existing spec before adding new requirement text.
-- Reuse the existing raw `httpx` client, auth policy, action-routed tool
-  modules, and SDK facade. Do not create a second Okta transport or route.
+- Reuse the existing raw `httpx` client, auth policy, typed tool surface
+  derived from the client, and SDK facade. Do not create a second Okta transport or route.
 - Bind every delivered requirement to a focused test. Generated `status.json`
   files are produced by `pipelines-hook spec-status`; never hand-edit them.
 - Keep the connector boundary intact: Okta calls and mappings live here, while
@@ -53,7 +53,7 @@ paths:
 
 ```bash
 uv run --all-extras pytest tests/test_publication_workflow.py -q
-uv run --all-extras pytest tests/test_startup.py tests/test_okta_mcp_validation.py -q
+uv run --all-extras pytest tests/test_startup.py tests/test_destructive_gate.py -q
 ```
 
 The external Okta API is never called by local tests. Use `httpx.MockTransport`
