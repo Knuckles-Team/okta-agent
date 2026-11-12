@@ -31,7 +31,6 @@ Connect via the `mcp-client` skill against the **`okta-agent`** MCP server.
 | `OKTA_ORG_URL` | ✅ | Org base URL, e.g. `[configured-endpoint]` |
 | `OKTA_API_TOKEN` | ✅ | SSWS API token (or OAuth client creds below) |
 | `OKTA_CLIENT_ID` / `OKTA_PRIVATE_KEY` | optional | OAuth2 service-app auth |
-| `OKTA_ALLOW_DESTRUCTIVE` | optional | Default gate for destructive operations |
 
 ## Tools
 | Tool | Purpose |
@@ -55,7 +54,7 @@ Connect via the `mcp-client` skill against the **`okta-agent`** MCP server.
 
 Destructive tools (`okta_deactivate_user`, `okta_suspend_user`, `okta_expire_password`,
 `okta_reset_password`, `okta_clear_user_sessions`) refuse to run unless called with
-`allow_destructive=true` or `OKTA_ALLOW_DESTRUCTIVE=True` is set.
+`confirm=true` or the operator sets `SCION_ALLOW_DESTRUCTIVE=true`.
 
 ### Key parameters
 - `user_id` — required for get, lifecycle, credential and related reads (accepts id, login, or login shortname).
@@ -68,7 +67,7 @@ List active users (`okta_search_users`): `conditions` = `[{"field":"status","op"
 
 Create and immediately activate a user (`okta_create_user`): `profile` = `{"firstName":"Ada","lastName":"Lovelace","email":"ada@acme.com","login":"ada@acme.com"}`, `activate` = true.
 
-Reset a password without emailing (`okta_reset_password`, destructive): `user_id` = `00u1abc...`, `send_email` = false, `allow_destructive` = true. The response carries a one-time reset URL.
+Reset a password without emailing (`okta_reset_password`, destructive): `user_id` = `00u1abc...`, `send_email` = false, `confirm` = true. The response carries a one-time reset URL.
 
 ## Gotchas
 - Lifecycle transitions are state-gated: `activate` needs STAGED/DEPROVISIONED;

@@ -26,7 +26,7 @@ Use the provider's governed MCP tools through Arbora delegation.
 - Users, groups and applications: see `okta-user-lifecycle` and `okta-access-management`.
 - Graph: `okta_ingest_users`, `okta_ingest_groups`, `okta_ingest_apps`, `okta_ingest_all`.
 
-Destructive tools take `allow_destructive=true` or need `OKTA_ALLOW_DESTRUCTIVE=True`; leave both off for read and reversible work.
+Destructive tools ask the caller to confirm (or take `confirm=true`); read and reversible work needs neither.
 
 ## Safety contract
 

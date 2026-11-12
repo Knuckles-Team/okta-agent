@@ -161,7 +161,7 @@ class TestErrorEnvelopeMapping:
         import httpx
 
         api = make_api(lambda request: httpx.Response(204))
-        assert api.clear_user_sessions("u1", allow_destructive=True)["data"] == {"status": "success"}
+        assert api.clear_user_sessions("u1")["data"] == {"status": "success"}
 
 
 @pytest.mark.concept("OK-OS.identity.default")

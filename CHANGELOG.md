@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-11-12
+
+### Changed
+- The thirteen destructive operations now use the SDK's one declaration and guard (`destructive_operation`, scion-sdk 0.10.2). Each served tool carries the MCP `destructiveHint` and the SDK's `confirm` argument, and a call without confirmation sends no request to the org.
+
+### Removed
+- The connector's own gate: the per-call `allow_destructive` argument, the `OKTA_ALLOW_DESTRUCTIVE` setting, `allow_destructive_default`, `DestructiveBlockedError` and `_require_destructive`. For unattended use the one operator setting is `SCION_ALLOW_DESTRUCTIVE`.
+
 ## [2.3.9] - 2026-11-12
 
 ### Removed

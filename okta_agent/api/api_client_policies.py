@@ -11,6 +11,8 @@ https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Polic
 
 from typing import Any
 
+from scion_sdk.mcp.destructive import destructive_operation
+
 from okta_agent.api.api_client_base import ApiClientBase, drop_none
 
 #: Friendly aliases → Okta policy type identifiers.
@@ -78,14 +80,12 @@ class Api(ApiClientBase):
             self.request("POST", f"/api/v1/policies/{policy_id}/lifecycle/activate")
         )
 
-    def deactivate_policy(
-        self, policy_id: str, allow_destructive: bool = False
-    ) -> dict[str, Any]:
+    @destructive_operation
+    def deactivate_policy(self, policy_id: str) -> dict[str, Any]:
         """Deactivate a policy — destructive.
 
         POST /api/v1/policies/{policyId}/lifecycle/deactivate
         """
-        self._require_destructive("deactivate_policy", allow_destructive)
         return self.envelope(
             self.request("POST", f"/api/v1/policies/{policy_id}/lifecycle/deactivate")
         )
@@ -102,14 +102,12 @@ class Api(ApiClientBase):
             )
         )
 
-    def deactivate_policy_rule(
-        self, policy_id: str, rule_id: str, allow_destructive: bool = False
-    ) -> dict[str, Any]:
+    @destructive_operation
+    def deactivate_policy_rule(self, policy_id: str, rule_id: str) -> dict[str, Any]:
         """Deactivate a policy rule — destructive.
 
         POST /api/v1/policies/{policyId}/rules/{ruleId}/lifecycle/deactivate
         """
-        self._require_destructive("deactivate_policy_rule", allow_destructive)
         return self.envelope(
             self.request(
                 "POST",

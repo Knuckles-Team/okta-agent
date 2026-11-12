@@ -101,7 +101,7 @@ connector = Connector(
     api=Api,
     get_client=get_client,
     tools="okta_agent.mcp_server",
-    instructions="Okta Agent MCP Server — enterprise CIAM/SSO operations against the Okta Management API (users, groups, apps, policies, system log). Destructive operations take allow_destructive=true (or OKTA_ALLOW_DESTRUCTIVE=True).",
+    instructions="Okta Agent MCP Server — enterprise CIAM/SSO operations against the Okta Management API (users, groups, apps, policies, system log). Destructive operations ask the caller to confirm (confirm=true).",
     transports=(
         "stdio",
         "streamable-http",

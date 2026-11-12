@@ -14,8 +14,8 @@ environment. Two auth modes (in precedence order):
 Other knobs: ``OKTA_ORG_URL`` (e.g. ``https://acme.okta.com``),
 ``OKTA_TLS_PROFILE`` / ``OKTA_TLS_PROFILE_REF``, ``OKTA_MAX_RETRIES`` and
 ``OKTA_BACKOFF_CAP_SECONDS``
-(429 backoff), and ``OKTA_ALLOW_DESTRUCTIVE`` (CONCEPT:OK-OS.identity.default — default
-gate for destructive tool actions, see :mod:`okta_agent.mcp`).
+(429 backoff). Destructive operations use the SDK's single declaration and guard
+(``SCION_ALLOW_DESTRUCTIVE`` for unattended use).
 """
 
 import logging
@@ -94,8 +94,3 @@ def get_client() -> Api:
         max_retries=max_retries,
         backoff_cap=backoff_cap,
     )
-
-
-def allow_destructive_default() -> bool:
-    """CONCEPT:OK-OS.identity.default Org-wide default for the destructive-action gate."""
-    return setting("OKTA_ALLOW_DESTRUCTIVE", False)

@@ -23,7 +23,7 @@ _INVALID_STATE = Refusal(
 )
 _DESTRUCTIVE_BLOCKED = Refusal(
     "DESTRUCTIVE_BLOCKED",
-    "allow_destructive is not set and OKTA_ALLOW_DESTRUCTIVE is off",
+    "the caller did not confirm the destructive operation",
 )
 _RATE_LIMITED = Refusal(
     "RATE_LIMITED", "the org rate limit is exhausted after the capped backoff"
@@ -146,13 +146,13 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_expire_password",
-                params=("user_id", "temp_password", "allow_destructive"),
+                params=("user_id", "temp_password", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
             ToolStep(
                 "okta_reset_password",
-                params=("user_id", "send_email", "allow_destructive"),
+                params=("user_id", "send_email", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
@@ -182,25 +182,25 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_clear_user_sessions",
-                params=("user_id", "oauth_tokens", "allow_destructive"),
+                params=("user_id", "oauth_tokens", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
             ToolStep(
                 "okta_remove_group_member",
-                params=("group_id", "user_id", "allow_destructive"),
+                params=("group_id", "user_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
             ToolStep(
                 "okta_unassign_user_from_app",
-                params=("app_id", "user_id", "allow_destructive"),
+                params=("app_id", "user_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
             ToolStep(
                 "okta_suspend_user",
-                params=("user_id", "allow_destructive"),
+                params=("user_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(
                     _ACCESS_DENIED,
@@ -211,7 +211,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_deactivate_user",
-                params=("user_id", "send_email", "allow_destructive"),
+                params=("user_id", "send_email", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(
                     _ACCESS_DENIED,
@@ -270,13 +270,13 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_remove_group_member",
-                params=("group_id", "user_id", "allow_destructive"),
+                params=("group_id", "user_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
             ToolStep(
                 "okta_delete_group",
-                params=("group_id", "allow_destructive"),
+                params=("group_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
@@ -306,7 +306,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_deactivate_group_rule",
-                params=("rule_id", "allow_destructive"),
+                params=("rule_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
@@ -348,7 +348,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_deactivate_app",
-                params=("app_id", "allow_destructive"),
+                params=("app_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
@@ -366,7 +366,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_unassign_user_from_app",
-                params=("app_id", "user_id", "allow_destructive"),
+                params=("app_id", "user_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
@@ -384,7 +384,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_unassign_group_from_app",
-                params=("app_id", "group_id", "allow_destructive"),
+                params=("app_id", "group_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
@@ -420,7 +420,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_deactivate_policy",
-                params=("policy_id", "allow_destructive"),
+                params=("policy_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),
@@ -432,7 +432,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 "okta_deactivate_policy_rule",
-                params=("policy_id", "rule_id", "allow_destructive"),
+                params=("policy_id", "rule_id", "confirm"),
                 result=("data", "rate_limit"),
                 refusals=(_ACCESS_DENIED, _NOT_FOUND, _DESTRUCTIVE_BLOCKED),
             ),

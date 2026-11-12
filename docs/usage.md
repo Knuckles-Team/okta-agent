@@ -39,4 +39,4 @@ Create an OIDC app from the template (`okta_create_app`): `template` = `oidc`, `
 
 Query the system log, capped and resumable (`okta_get_system_log`): `since` = `2026-06-01T00:00:00Z`, `filter_expr` = `eventType eq "user.session.start"`, `limit` = 200.
 
-Destructive operations require explicit consent (`okta_clear_user_sessions`): `user_id` = `00u1`, `oauth_tokens` = true, `allow_destructive` = true.
+Destructive operations require explicit consent (`okta_clear_user_sessions`): `user_id` = `00u1`, `oauth_tokens` = true, `confirm` = true.

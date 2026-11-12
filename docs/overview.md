@@ -30,7 +30,7 @@ flowchart LR
 
 Destructive operations — deactivations, deletes, session clears, password
 operations, assignment removals — return a structured refusal unless the call
-carries `allow_destructive=true` or the org sets `OKTA_ALLOW_DESTRUCTIVE=True`.
+carries `confirm=true` or the operator sets `SCION_ALLOW_DESTRUCTIVE=true`.
 System-log queries are hard-capped at 1000 events per call with a resumable
 cursor. Credential material (SSWS tokens, bearer tokens, private keys) never
 appears in logs or error envelopes.

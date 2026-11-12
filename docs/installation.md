@@ -13,7 +13,6 @@
 | `OKTA_TLS_PROFILE` | `system` | TLS verification |
 | `OKTA_MAX_RETRIES` | `2` | Retry attempts on HTTP 429 |
 | `OKTA_BACKOFF_CAP_SECONDS` | `60` | Upper bound on a single 429 backoff sleep |
-| `OKTA_ALLOW_DESTRUCTIVE` | `False` | Org-wide default for the destructive-action gate |
 | `USERSTOOL` … `SYSTEMTOOL` | `True` | Per-tool registration switches |
 
 ## Okta-side setup
