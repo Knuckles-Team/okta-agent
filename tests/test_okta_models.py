@@ -1,58 +1,14 @@
 """CONCEPT:OK-OS.governance.okta / CONCEPT:OK-OS.governance.okta-2 typed envelope and input-model contracts."""
 
-import json
 
 import pytest
-from pydantic import ValidationError
 
 from okta_agent.api.api_client_base import OktaApiError
-from okta_agent.okta_input_models import (
-    AppCreateInput,
-    FilterCondition,
-    GroupMemberInput,
-    PolicyListInput,
-    SearchInput,
-    SystemLogInput,
-    UserCreateInput,
-)
 from okta_agent.okta_response_models import (
     ErrorEnvelope,
     RateLimitSnapshot,
     ResponseEnvelope,
 )
-
-
-@pytest.mark.concept("OK-OS.governance.okta-2")
-class TestInputModels:
-    def test_search_input_round_trips_to_params_json(self):
-        model = SearchInput(
-            conditions=[FilterCondition(field="status", op="eq", value="ACTIVE")]
-        )
-        params = json.loads(model.model_dump_json(exclude_none=True))
-        assert params["conditions"] == [
-            {"field": "status", "op": "eq", "value": "ACTIVE"}
-        ]
-        assert params["joiner"] == "and"
-
-    def test_user_create_requires_profile(self):
-        with pytest.raises(ValidationError):
-            UserCreateInput.model_validate({})
-        assert UserCreateInput(profile={"login": "a@b.com"}).activate is True
-
-    def test_group_member_input_matches_tool_param_keys(self):
-        model = GroupMemberInput(group_id="00g1", user_id="00u1")
-        assert model.model_dump() == {"group_id": "00g1", "user_id": "00u1"}
-
-    def test_app_create_defaults_empty_settings(self):
-        model = AppCreateInput(template="oidc", label="My App")
-        assert model.settings == {}
-
-    def test_policy_list_requires_policy_type(self):
-        with pytest.raises(ValidationError):
-            PolicyListInput.model_validate({})
-
-    def test_system_log_input_is_fully_optional(self):
-        assert SystemLogInput().model_dump(exclude_none=True) == {}
 
 
 @pytest.mark.concept("OK-OS.governance.okta")

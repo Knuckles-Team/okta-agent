@@ -4,8 +4,8 @@ ontology_source: okta
 sync:
 - preset: okta-apps
   server: okta-mcp
-  tool: okta_apps
-  action: list
+  tool: okta_list_apps
+  action: null
   records_path: data
   id_field: id
   title_field: label
@@ -15,8 +15,8 @@ sync:
   tool_schema_sha256: 6ff2bae6fae945eff62584efc2d75bddad777e61f209cad0de904055c20fc243
 - preset: okta-groups
   server: okta-mcp
-  tool: okta_groups
-  action: list
+  tool: okta_list_groups
+  action: null
   records_path: data
   id_field: id
   title_field: profile.name
@@ -26,8 +26,8 @@ sync:
   tool_schema_sha256: edb42a85eb1ac297aff11b6104a116c3565ce76e10131c6a3fc0e16c51977e5c
 - preset: okta-users
   server: okta-mcp
-  tool: okta_users
-  action: list
+  tool: okta_list_users
+  action: null
   records_path: data
   id_field: id
   title_field: profile.login

@@ -172,11 +172,14 @@ class Api(ApiClientBase):
             self.request("POST", f"/api/v1/apps/{app_id}/lifecycle/activate")
         )
 
-    def deactivate_app(self, app_id: str) -> dict[str, Any]:
+    def deactivate_app(
+        self, app_id: str, allow_destructive: bool = False
+    ) -> dict[str, Any]:
         """Deactivate an application — destructive.
 
         POST /api/v1/apps/{appId}/lifecycle/deactivate
         """
+        self._require_destructive("deactivate_app", allow_destructive)
         return self.envelope(
             self.request("POST", f"/api/v1/apps/{app_id}/lifecycle/deactivate")
         )
@@ -206,11 +209,14 @@ class Api(ApiClientBase):
             self.request("POST", f"/api/v1/apps/{app_id}/users", json_body=body)
         )
 
-    def unassign_user_from_app(self, app_id: str, user_id: str) -> dict[str, Any]:
+    def unassign_user_from_app(
+        self, app_id: str, user_id: str, allow_destructive: bool = False
+    ) -> dict[str, Any]:
         """Remove a user's app assignment — destructive.
 
         DELETE /api/v1/apps/{appId}/users/{userId}
         """
+        self._require_destructive("unassign_user_from_app", allow_destructive)
         return self.envelope(
             self.request("DELETE", f"/api/v1/apps/{app_id}/users/{user_id}")
         )
@@ -240,11 +246,14 @@ class Api(ApiClientBase):
             )
         )
 
-    def unassign_group_from_app(self, app_id: str, group_id: str) -> dict[str, Any]:
+    def unassign_group_from_app(
+        self, app_id: str, group_id: str, allow_destructive: bool = False
+    ) -> dict[str, Any]:
         """Remove a group's app assignment — destructive.
 
         DELETE /api/v1/apps/{appId}/groups/{groupId}
         """
+        self._require_destructive("unassign_group_from_app", allow_destructive)
         return self.envelope(
             self.request("DELETE", f"/api/v1/apps/{app_id}/groups/{group_id}")
         )

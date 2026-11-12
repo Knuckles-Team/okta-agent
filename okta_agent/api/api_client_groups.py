@@ -89,11 +89,14 @@ class Api(ApiClientBase):
             )
         )
 
-    def delete_group(self, group_id: str) -> dict[str, Any]:
+    def delete_group(
+        self, group_id: str, allow_destructive: bool = False
+    ) -> dict[str, Any]:
         """Delete a group — destructive.
 
         DELETE /api/v1/groups/{groupId}
         """
+        self._require_destructive("delete_group", allow_destructive)
         return self.envelope(self.request("DELETE", f"/api/v1/groups/{group_id}"))
 
     # ------------------------------------------------------------------ #
@@ -118,11 +121,14 @@ class Api(ApiClientBase):
             self.request("PUT", f"/api/v1/groups/{group_id}/users/{user_id}")
         )
 
-    def remove_group_member(self, group_id: str, user_id: str) -> dict[str, Any]:
+    def remove_group_member(
+        self, group_id: str, user_id: str, allow_destructive: bool = False
+    ) -> dict[str, Any]:
         """Remove a user from a group — destructive.
 
         DELETE /api/v1/groups/{groupId}/users/{userId}
         """
+        self._require_destructive("remove_group_member", allow_destructive)
         return self.envelope(
             self.request("DELETE", f"/api/v1/groups/{group_id}/users/{user_id}")
         )
@@ -174,11 +180,14 @@ class Api(ApiClientBase):
             self.request("POST", f"/api/v1/groups/rules/{rule_id}/lifecycle/activate")
         )
 
-    def deactivate_group_rule(self, rule_id: str) -> dict[str, Any]:
+    def deactivate_group_rule(
+        self, rule_id: str, allow_destructive: bool = False
+    ) -> dict[str, Any]:
         """Deactivate a group rule — destructive.
 
         POST /api/v1/groups/rules/{ruleId}/lifecycle/deactivate
         """
+        self._require_destructive("deactivate_group_rule", allow_destructive)
         return self.envelope(
             self.request("POST", f"/api/v1/groups/rules/{rule_id}/lifecycle/deactivate")
         )

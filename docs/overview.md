@@ -1,14 +1,14 @@
 # Overview
 
-`okta-agent` wraps the Okta Management API in five consolidated, action-routed
-MCP tools backed by a raw `httpx` client (no Okta SDK).
+`okta-agent` wraps the Okta Management API in one typed
+MCP tool per operation, backed by a raw `httpx` client (no Okta SDK).
 
 ## Architecture
 
 ```mermaid
 flowchart LR
     A["MCP client / agent"] --> B["FastMCP server"]
-    B --> C["Action routers"]
+    B --> C["Typed operation tools"]
     C --> D["Api facade"]
     D --> E["httpx base client"]
     E --> F["Okta org"]
@@ -24,7 +24,7 @@ flowchart LR
   cursor pagination, Okta error-envelope mapping, secret redaction.
 - **Domain clients** (`api_client_users/groups/apps/policies/system.py`): one
   method per endpoint, the API reference cited in each docstring.
-- **MCP tools** (`okta_agent/mcp/`): thin action routers; no business logic.
+- **MCP tools**: the SDK derives one typed tool per client method; `okta_agent/mcp_server.py` adds the graph-ingest tools. The destructive-operation gate lives in the base client.
 
 ## Safety model
 

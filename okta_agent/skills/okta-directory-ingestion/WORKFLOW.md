@@ -18,8 +18,8 @@ cleanly when no graph engine is reachable.
 ## When NOT to use
 - Mutating users, membership, or app assignments → `okta-user-lifecycle` /
   `okta-access-management` (this path only reads Okta and writes the KG).
-- Ad-hoc single-object reads → the domain-typed `okta_users` / `okta_groups` /
-  `okta_apps` tools directly.
+- Ad-hoc single-object reads → the typed `okta_list_users` / `okta_list_groups` /
+  `okta_list_apps` tools directly.
 
 ## Prerequisites & environment
 Connect via the `mcp-client` skill against the **`okta-agent`** MCP server. Needs
@@ -27,32 +27,26 @@ the same `OKTA_ORG_URL` + `OKTA_API_TOKEN` (or OAuth) credentials as the other
 Okta skills, plus a reachable medulla engine for the write to land
 (otherwise `ingested` comes back `null`).
 
-## Tools & actions
-| Tool | Action | Effect |
-|------|--------|--------|
-| `okta_ingest` | `users` | List users → `:User` nodes |
-| `okta_ingest` | `groups` | List groups → `:Group` nodes |
-| `okta_ingest` | `apps` | List applications → `:Application` nodes |
-| `okta_ingest` | `all` (default) | Ingest all three |
+## Tools
+| Tool | Effect |
+|------|--------|
+| `okta_ingest_users` | List users and write `:User` nodes |
+| `okta_ingest_groups` | List groups and write `:Group` nodes |
+| `okta_ingest_apps` | List applications and write `:Application` nodes |
+| `okta_ingest_all` | Ingest all three |
 
-`params_json` accepts `{"limit": 200, "max_items": 1000}` to bound the listing
-pulled before ingestion. Node ids follow `okta:<class>:<oktaId>`; each `type`
+Each tool accepts `limit` (page size, default 200) and `max_items` (overall cap, default 1000)
+to bound the listing pulled before ingestion. Node ids follow `okta:<class>:<oktaId>`; each `type`
 matches a class federated by the `okta_agent.ontology` `okta.ttl`.
 
 Declaratively, the same mapping is available to `source_sync` via the in-repo
 `connectors/mcp_source_presets.json` presets (`okta-users` / `okta-groups` /
 `okta-apps`).
 
-## Recipes (`params_json`)
-Mirror the whole directory:
-```json
-{}
-```
-Ingest just the first 500 users:
-```json
-{"limit":200,"max_items":500}
-```
-(with `action: "users"`)
+## Recipes
+Mirror the whole directory: call `okta_ingest_all` with no arguments.
+
+Ingest just the first 500 users: `okta_ingest_users` with `limit` = 200 and `max_items` = 500.
 
 ## Gotchas
 - The write is **best-effort**: with no reachable engine, `ingested` is `null`

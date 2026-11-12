@@ -43,7 +43,7 @@ def test_development_skill_has_real_delivery_contract_and_actual_tests():
     for test_path in (
         "tests/test_publication_workflow.py",
         "tests/test_startup.py",
-        "tests/test_okta_mcp_validation.py",
+        "tests/test_destructive_gate.py",
     ):
         assert test_path in content
         assert (ROOT / test_path).exists()

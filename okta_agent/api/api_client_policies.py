@@ -78,11 +78,14 @@ class Api(ApiClientBase):
             self.request("POST", f"/api/v1/policies/{policy_id}/lifecycle/activate")
         )
 
-    def deactivate_policy(self, policy_id: str) -> dict[str, Any]:
+    def deactivate_policy(
+        self, policy_id: str, allow_destructive: bool = False
+    ) -> dict[str, Any]:
         """Deactivate a policy — destructive.
 
         POST /api/v1/policies/{policyId}/lifecycle/deactivate
         """
+        self._require_destructive("deactivate_policy", allow_destructive)
         return self.envelope(
             self.request("POST", f"/api/v1/policies/{policy_id}/lifecycle/deactivate")
         )
@@ -99,11 +102,14 @@ class Api(ApiClientBase):
             )
         )
 
-    def deactivate_policy_rule(self, policy_id: str, rule_id: str) -> dict[str, Any]:
+    def deactivate_policy_rule(
+        self, policy_id: str, rule_id: str, allow_destructive: bool = False
+    ) -> dict[str, Any]:
         """Deactivate a policy rule — destructive.
 
         POST /api/v1/policies/{policyId}/rules/{ruleId}/lifecycle/deactivate
         """
+        self._require_destructive("deactivate_policy_rule", allow_destructive)
         return self.envelope(
             self.request(
                 "POST",

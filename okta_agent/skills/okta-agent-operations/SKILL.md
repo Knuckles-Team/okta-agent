@@ -12,12 +12,21 @@ Use the provider's governed MCP tools through Arbora delegation.
 ## Workflow
 
 1. Establish the verified GraphSession and tenant before discovery or retrieval.
-2. Discover the current condensed tool surface; never assume a stale tool name or schema.
+2. Discover the current tool surface; never assume a stale tool name or schema.
 3. Prefer read-only inspection first. For changes, present impact and use the provider's
    dry-run or preview mode when available.
 4. Execute mutations as fenced WorkItems so retries remain idempotent and auditable.
 5. Ingest source data only through the signed connector preset and ChangeEnvelope path.
 6. Verify the durable result and its trace/evidence before reporting completion.
+
+## Tools
+
+- Policies (read and lifecycle): `okta_list_policies`, `okta_get_policy`, `okta_list_policy_rules`, `okta_activate_policy`, `okta_activate_policy_rule`; destructive `okta_deactivate_policy`, `okta_deactivate_policy_rule`.
+- Org and audit: `okta_get_org`, `okta_list_authorization_servers`, `okta_get_system_log`, `okta_list_authenticators`, `okta_list_org_factors`, `okta_list_network_zones`.
+- Users, groups and applications: see `okta-user-lifecycle` and `okta-access-management`.
+- Graph: `okta_ingest_users`, `okta_ingest_groups`, `okta_ingest_apps`, `okta_ingest_all`.
+
+Destructive tools take `allow_destructive=true` or need `OKTA_ALLOW_DESTRUCTIVE=True`; leave both off for read and reversible work.
 
 ## Safety contract
 

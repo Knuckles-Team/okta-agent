@@ -27,7 +27,7 @@ This file acts as a machine-readable README for AI coding agents collaborating o
   - `okta_agent/api_client.py`: API facade composing the domain modules.
   - `okta_agent/auth.py`: Credentials loading (SSWS / private-key-JWT) and client builder.
   - `okta_agent/api/api_client_base.py`: rate limits, 429 backoff, pagination, error mapping, redaction.
-  - `okta_agent/mcp/common.py`: destructive-action gate and error envelopes.
+  - `okta_agent/api/api_client_base.py` `_require_destructive`: the destructive-operation gate (per-call `allow_destructive` or `OKTA_ALLOW_DESTRUCTIVE`).
 
 ### Architecture Diagram
 
