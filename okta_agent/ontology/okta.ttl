@@ -2,6 +2,7 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix : <http://knuckles.team/kg#> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -16,31 +17,35 @@
 :User a owl:Class ;
     rdfs:label "Okta User" ;
     rdfs:comment "An Okta identity with a lifecycle status and profile (okta_list_users). A specialization of :Person." ;
-    rdfs:subClassOf :Person .
+    rdfs:subClassOf core:IdentityUser .
 
 :Group a owl:Class ;
-    rdfs:subClassOf :IdentityGroup ;
+    rdfs:subClassOf core:IdentityGroup ;
     rdfs:label "Okta Group" ;
     rdfs:comment "A collection of users used for access assignment (okta_list_groups). Type may be OKTA_GROUP, APP_GROUP, or BUILT_IN." .
 
 :Application a owl:Class ;
+    rdfs:subClassOf core:Application ;
     rdfs:label "Okta Application" ;
     rdfs:comment "An SSO/OIDC/SAML application integration users and groups are assigned to (okta_list_apps)." .
 
 :GroupRule a owl:Class ;
-    rdfs:subClassOf :Policy ;
+    rdfs:subClassOf core:Policy ;
     rdfs:label "Group Rule" ;
     rdfs:comment "A dynamic-membership rule that assigns users to a Group from an Okta Expression Language condition (okta_groups action=list_rules)." .
 
-:Policy a owl:Class .
+:Policy a owl:Class ;
+    rdfs:label "Okta Policy" ;
+    rdfs:subClassOf core:Policy .
 
 
 :Factor a owl:Class ;
+    rdfs:subClassOf core:Credential ;
     rdfs:label "MFA Factor" ;
     rdfs:comment "An enrolled multi-factor authentication method for a user (okta_list_user_factors)." .
 
 :LogEvent a owl:Class ;
-    rdfs:subClassOf :SecurityAuditEvent ;
+    rdfs:subClassOf core:SecurityAuditEvent ;
     rdfs:label "System Log Event" ;
     rdfs:comment "An audit event emitted by the Okta System Log describing an actor, target, and outcome (okta_get_system_log)." .
 
