@@ -11,7 +11,6 @@
         "APPSTOOL": "True",
         "GROUPSTOOL": "True",
         "INGESTTOOL": "True",
-        "OKTA_ALLOW_DESTRUCTIVE": "False",
         "OKTA_BACKOFF_CAP_SECONDS": "60",
         "OKTA_MAX_RETRIES": "2",
         "OKTA_ORG_URL": "https://acme.okta.com",

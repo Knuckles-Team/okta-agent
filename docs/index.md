@@ -25,7 +25,7 @@ policies, and the system log).
 
 Safety is built in: destructive operations (deactivate / delete / clear sessions /
 password ops) are blocked unless explicitly allowed per call or via
-`OKTA_ALLOW_DESTRUCTIVE`, and credential material is redacted from logs and error
+the SDK's `SCION_ALLOW_DESTRUCTIVE`, and credential material is redacted from logs and error
 envelopes.
 
 `okta-agent` complements `keycloak-agent`: the same verb taxonomy over the

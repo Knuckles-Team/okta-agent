@@ -12,6 +12,8 @@ https://developer.okta.com/docs/api/openapi/okta-management/management/tag/UserL
 
 from typing import Any
 
+from scion_sdk.mcp.destructive import destructive_operation
+
 from okta_agent.api.api_client_base import ApiClientBase, drop_none
 from okta_agent.api.filters import build_filter
 
@@ -130,14 +132,12 @@ class Api(ApiClientBase):
             )
         )
 
-    def deactivate_user(
-        self, user_id: str, send_email: bool = False, allow_destructive: bool = False
-    ) -> dict[str, Any]:
+    @destructive_operation
+    def deactivate_user(self, user_id: str, send_email: bool = False) -> dict[str, Any]:
         """Deactivate (deprovision) a user — destructive.
 
         POST /api/v1/users/{userId}/lifecycle/deactivate?sendEmail=
         """
-        self._require_destructive("deactivate_user", allow_destructive)
         return self.envelope(
             self.request(
                 "POST",
@@ -146,14 +146,12 @@ class Api(ApiClientBase):
             )
         )
 
-    def suspend_user(
-        self, user_id: str, allow_destructive: bool = False
-    ) -> dict[str, Any]:
+    @destructive_operation
+    def suspend_user(self, user_id: str) -> dict[str, Any]:
         """Suspend an ACTIVE user — destructive.
 
         POST /api/v1/users/{userId}/lifecycle/suspend
         """
-        self._require_destructive("suspend_user", allow_destructive)
         return self.envelope(
             self.request("POST", f"/api/v1/users/{user_id}/lifecycle/suspend")
         )
@@ -180,18 +178,17 @@ class Api(ApiClientBase):
     # Credentials
     # ------------------------------------------------------------------ #
 
+    @destructive_operation
     def expire_password(
         self,
         user_id: str,
         temp_password: bool = False,
-        allow_destructive: bool = False,
     ) -> dict[str, Any]:
         """Expire a user's password — destructive.
 
         POST /api/v1/users/{userId}/lifecycle/expire_password
         (or ``expire_password_with_temp_password`` when ``temp_password``).
         """
-        self._require_destructive("expire_password", allow_destructive)
         suffix = (
             "expire_password_with_temp_password" if temp_password else "expire_password"
         )
@@ -199,15 +196,13 @@ class Api(ApiClientBase):
             self.request("POST", f"/api/v1/users/{user_id}/lifecycle/{suffix}")
         )
 
-    def reset_password(
-        self, user_id: str, send_email: bool = True, allow_destructive: bool = False
-    ) -> dict[str, Any]:
+    @destructive_operation
+    def reset_password(self, user_id: str, send_email: bool = True) -> dict[str, Any]:
         """Start the password-reset flow — destructive.
 
         POST /api/v1/users/{userId}/lifecycle/reset_password?sendEmail= —
         with ``sendEmail=false`` Okta returns a one-time reset URL instead.
         """
-        self._require_destructive("reset_password", allow_destructive)
         return self.envelope(
             self.request(
                 "POST",
@@ -241,18 +236,17 @@ class Api(ApiClientBase):
         """
         return self.envelope(self.request("GET", f"/api/v1/users/{user_id}/factors"))
 
+    @destructive_operation
     def clear_user_sessions(
         self,
         user_id: str,
         oauth_tokens: bool = False,
-        allow_destructive: bool = False,
     ) -> dict[str, Any]:
         """Revoke all of a user's sessions — destructive.
 
         DELETE /api/v1/users/{userId}/sessions?oauthTokens= — when
         ``oauth_tokens`` is true, also revokes OIDC/OAuth tokens.
         """
-        self._require_destructive("clear_user_sessions", allow_destructive)
         return self.envelope(
             self.request(
                 "DELETE",

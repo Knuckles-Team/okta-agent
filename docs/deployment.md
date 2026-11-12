@@ -129,12 +129,11 @@ shell tooling and the Starship prompt.
 | `OKTA_API_TOKEN` | SSWS API token (auth mode 1, takes precedence) |
 | `OKTA_CLIENT_ID` / `OKTA_PRIVATE_KEY[_FILE]` / `OKTA_SCOPES` | OAuth2 private-key-JWT (auth mode 2) |
 | `OKTA_TLS_PROFILE` | Named outbound TLS policy from AgentConfig |
-| `OKTA_ALLOW_DESTRUCTIVE` | Org-wide default for destructive tool actions |
 | `HOST` / `PORT` / `TRANSPORT` | MCP server bind + transport |
 | `USERSTOOL` … `SYSTEMTOOL` | Per-domain tool toggles |
 
 Mount secrets (API token, private key) from the operator's secret store; never bake them
-into the image. Keep `OKTA_ALLOW_DESTRUCTIVE=False` in shared deployments.
+into the image. Keep `SCION_ALLOW_DESTRUCTIVE` unset in shared deployments.
 
 ## Reverse proxy + DNS (Caddy + Technitium)
 
