@@ -1,7 +1,7 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix : <http://knuckles.team/kg#> .
+@prefix : <https://knuckles-team.github.io/ontology/connector/okta#> .
 @prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -157,7 +157,7 @@
     rdfs:comment "The native Okta object id this node mirrors." ;
     rdfs:range xsd:string .
 
-<http://knuckles.team/kg/okta> a owl:Ontology ;
+<https://knuckles-team.github.io/ontology/connector/okta> a owl:Ontology ;
     rdfs:label "Okta CIAM/SSO Ontology" ;
     rdfs:comment """Okta enterprise identity model — users, groups, applications, group
     rules, access policies, MFA factors and system-log events, with their membership,

@@ -1,4 +1,4 @@
-"""Epistemic-graph typed-node ingestion -- Wire-First coverage for okta-agent.
+"""Medulla typed-node ingestion -- Wire-First coverage for okta-agent.
 
 Exercises the real ``ingest_entities`` / ``ingest_users`` / ``ingest_groups`` /
 ``ingest_apps`` seam against a fake ``scion_sdk.ingest`` transport (no engine
