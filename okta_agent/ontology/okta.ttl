@@ -24,25 +24,10 @@
     rdfs:label "Okta Group" ;
     rdfs:comment "A collection of users used for access assignment (okta_list_groups). Type may be OKTA_GROUP, APP_GROUP, or BUILT_IN." .
 
-:Application a owl:Class ;
-    rdfs:subClassOf core:Application ;
-    rdfs:label "Okta Application" ;
-    rdfs:comment "An SSO/OIDC/SAML application integration users and groups are assigned to (okta_list_apps)." .
-
 :GroupRule a owl:Class ;
     rdfs:subClassOf core:Policy ;
     rdfs:label "Group Rule" ;
     rdfs:comment "A dynamic-membership rule that assigns users to a Group from an Okta Expression Language condition (okta_groups action=list_rules)." .
-
-:Policy a owl:Class ;
-    rdfs:label "Okta Policy" ;
-    rdfs:subClassOf core:Policy .
-
-
-:Factor a owl:Class ;
-    rdfs:subClassOf core:Credential ;
-    rdfs:label "MFA Factor" ;
-    rdfs:comment "An enrolled multi-factor authentication method for a user (okta_list_user_factors)." .
 
 :LogEvent a owl:Class ;
     rdfs:subClassOf core:SecurityAuditEvent ;
@@ -51,22 +36,16 @@
 
 # --- links (owl:ObjectProperty) ---
 
-:memberOfGroup a owl:ObjectProperty ;
-    rdfs:label "member of group" ;
-    rdfs:comment "Links a User to a Group it belongs to." ;
-    rdfs:domain :User ;
-    rdfs:range :Group .
-
 :assignedToApp a owl:ObjectProperty ;
     rdfs:label "assigned to app" ;
     rdfs:comment "Links a User or Group to an Application it is assigned to." ;
-    rdfs:range :Application .
+    rdfs:range core:Application .
 
 :hasFactor a owl:ObjectProperty ;
     rdfs:label "has factor" ;
     rdfs:comment "Links a User to an enrolled MFA Factor." ;
     rdfs:domain :User ;
-    rdfs:range :Factor .
+    rdfs:range core:Factor .
 
 :governedByRule a owl:ObjectProperty ;
     rdfs:label "governed by rule" ;
@@ -77,8 +56,8 @@
 :appliesToApp a owl:ObjectProperty ;
     rdfs:label "applies to app" ;
     rdfs:comment "Links a Policy to the Application whose access it governs." ;
-    rdfs:domain :Policy ;
-    rdfs:range :Application .
+    rdfs:domain core:Policy ;
+    rdfs:range core:Application .
 
 :targetsUser a owl:ObjectProperty ;
     rdfs:label "targets user" ;
@@ -99,12 +78,6 @@
     rdfs:domain :User ;
     rdfs:range xsd:string .
 
-:email a owl:DatatypeProperty ;
-    rdfs:label "email" ;
-    rdfs:comment "Primary email address on a User's profile." ;
-    rdfs:domain :User ;
-    rdfs:range xsd:string .
-
 :groupType a owl:DatatypeProperty ;
     rdfs:label "group type" ;
     rdfs:comment "Okta Group type: OKTA_GROUP, APP_GROUP, or BUILT_IN." ;
@@ -114,30 +87,25 @@
 :signOnMode a owl:DatatypeProperty ;
     rdfs:label "sign-on mode" ;
     rdfs:comment "An Application's SSO mode (SAML_2_0, OPENID_CONNECT, SECURE_PASSWORD_STORE, BOOKMARK, …)." ;
-    rdfs:domain :Application ;
+    rdfs:domain core:Application ;
     rdfs:range xsd:string .
 
 :policyType a owl:DatatypeProperty ;
     rdfs:label "policy type" ;
     rdfs:comment "Okta Policy type (OKTA_SIGN_ON, PASSWORD, MFA_ENROLL, ACCESS_POLICY, …)." ;
-    rdfs:domain :Policy ;
+    rdfs:domain core:Policy ;
     rdfs:range xsd:string .
-
-:priority a owl:DatatypeProperty ;
-    rdfs:label "priority" ;
-    rdfs:comment "Evaluation priority of a Policy or GroupRule (lower is evaluated first)." ;
-    rdfs:range xsd:integer .
 
 :factorType a owl:DatatypeProperty ;
     rdfs:label "factor type" ;
     rdfs:comment "MFA Factor type (okta_verify, sms, call, email, webauthn, google_otp, …)." ;
-    rdfs:domain :Factor ;
+    rdfs:domain core:Factor ;
     rdfs:range xsd:string .
 
 :provider a owl:DatatypeProperty ;
     rdfs:label "provider" ;
     rdfs:comment "MFA Factor provider (OKTA, GOOGLE, FIDO, YUBICO, …)." ;
-    rdfs:domain :Factor ;
+    rdfs:domain core:Factor ;
     rdfs:range xsd:string .
 
 :eventType a owl:DatatypeProperty ;
@@ -150,11 +118,6 @@
     rdfs:label "outcome" ;
     rdfs:comment "Result of a System Log event (SUCCESS, FAILURE, …)." ;
     rdfs:domain :LogEvent ;
-    rdfs:range xsd:string .
-
-:externalToolId a owl:DatatypeProperty ;
-    rdfs:label "external tool id" ;
-    rdfs:comment "The native Okta object id this node mirrors." ;
     rdfs:range xsd:string .
 
 <https://knuckles-team.github.io/ontology/connector/okta> a owl:Ontology ;
