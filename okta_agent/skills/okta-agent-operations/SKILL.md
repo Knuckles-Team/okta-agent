@@ -19,6 +19,22 @@ Use the provider's governed MCP tools through Arbora delegation.
 5. Ingest source data only through the signed connector preset and ChangeEnvelope path.
 6. Verify the durable result and its trace/evidence before reporting completion.
 
+## Steps
+
+1. Confirm access by calling `okta_get_org`. Verify it returns the organization without an authentication error.
+2. Pick the matching tool from the Tools list below, for example `okta_list_policies` for policies. Verify the tool name appears in that list.
+3. Run read-only inspection first, for example `okta_get_policy` (`policy_id`). Verify the object you will change exists.
+4. For a change, present the impact and call one tool, for example `okta_activate_policy`. Verify the response reports the new status.
+5. For audit evidence, call `okta_get_system_log`. Verify an event for your action appears.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| 401 or 403 from Okta | `OKTA_ORG_URL` or `OKTA_API_TOKEN` missing or lacking rights | Set both variables with a token that has the needed admin role, then call `okta_get_org`. |
+| Deactivate refused | `okta_deactivate_policy` or `okta_deactivate_policy_rule` ran without confirmation | Obtain explicit approval naming the policy, then call the tool again with `confirm=true`. |
+| Empty policy list | Wrong policy `type` filter | Call `okta_list_policies` again with a valid type from the Okta policy types. |
+
 ## Tools
 
 - Policies (read and lifecycle): `okta_list_policies`, `okta_get_policy`, `okta_list_policy_rules`, `okta_activate_policy`, `okta_activate_policy_rule`; destructive `okta_deactivate_policy`, `okta_deactivate_policy_rule`.

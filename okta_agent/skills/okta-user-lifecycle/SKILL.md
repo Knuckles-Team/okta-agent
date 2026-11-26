@@ -2,13 +2,7 @@
 name: okta-user-lifecycle
 skill_type: skill
 description: >-
-  Okta user identity and lifecycle operations via the okta-agent MCP server —
-  list/search users, read one by id or login, create/update profiles, and drive
-  lifecycle transitions (activate, deactivate, suspend, unsuspend, unlock) plus
-  credential actions (expire/reset password, clear sessions) and MFA factor
-  reads. Use when the agent must provision, deprovision, or troubleshoot an Okta
-  user, or read a user's groups/apps/factors. Do NOT use for group membership
-  management (okta-access-management) or bulk KG mirroring (okta-directory-ingestion).
+  Okta user identity and lifecycle via the okta-agent MCP server: search and read users, create or update profiles, run lifecycle, credential and MFA factor actions. Use to provision, deprovision or troubleshoot a user. Do NOT use for group membership (okta-access-management) or KG mirroring (okta-directory-ingestion).
 license: MIT
 tags: [okta, identity, ciam, lifecycle, users, mcp]
 metadata:
@@ -16,6 +10,8 @@ metadata:
   version: '0.1.0'
 ---
 # Okta User Lifecycle
+
+Scope: Okta user identity and lifecycle operations via the okta-agent MCP server — list/search users, read one by id or login, create/update profiles, and drive lifecycle transitions (activate, deactivate, suspend, unsuspend, unlock) plus credential actions (expire/reset password, clear sessions) and MFA factor reads. Use when the agent must provision, deprovision, or troubleshoot an Okta user, or read a user's groups/apps/factors. Do NOT use for group membership management (okta-access-management) or bulk KG mirroring (okta-directory-ingestion).
 
 Domain-typed access to the Okta **Users** and **UserLifecycle** APIs for
 provisioning, deprovisioning and credential/MFA troubleshooting. Prefer the
@@ -44,6 +40,23 @@ Connect via the `mcp-client` skill against the **`okta-agent`** MCP server.
 | `OKTA_ORG_URL` | ✅ | Org base URL, e.g. `https://acme.okta.com` |
 | `OKTA_API_TOKEN` | ✅ | SSWS API token (or OAuth client creds below) |
 | `OKTA_CLIENT_ID` / `OKTA_PRIVATE_KEY` | optional | OAuth2 service-app auth |
+
+## Steps
+
+1. Locate the user with `okta_search_users` (`conditions`, `joiner`) or `okta_get_user` (`user_id`). Verify the returned login matches the person requested.
+2. Check the current status with `okta_get_user` (`user_id`). Verify it permits the transition: activate needs STAGED or DEPROVISIONED, unsuspend needs SUSPENDED, unlock needs LOCKED_OUT.
+3. Create or change the user with `okta_create_user` (`profile`, `activate`) or `okta_update_user`. Verify `okta_get_user` shows the new profile values.
+4. Apply the lifecycle action with `okta_activate_user`, `okta_suspend_user`, `okta_unlock_user` or `okta_deactivate_user`. Verify `okta_get_user` reports the expected status.
+5. For credential problems, call `okta_reset_password` (`user_id`, `send_email`, `confirm`) or `okta_clear_user_sessions`. Verify the response confirms the action.
+6. Read access with `okta_list_user_groups`, `okta_list_user_apps` and `okta_list_user_factors`. Verify the lists match the intended state.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| 401 or 403 from Okta | `OKTA_ORG_URL` or `OKTA_API_TOKEN` missing or expired | Set both variables, or the OAuth pair `OKTA_CLIENT_ID` and `OKTA_PRIVATE_KEY`, then call `okta_list_users` with `limit` = 1. |
+| Transition rejected | The user is not in the required state | Read the status with `okta_get_user` and choose the transition that matches it. |
+| Destructive tool refused | `confirm=true` not given | Confirm the user id with the requester and call the tool again with `confirm=true`. |
 
 ## Tools
 | Tool | Purpose |
