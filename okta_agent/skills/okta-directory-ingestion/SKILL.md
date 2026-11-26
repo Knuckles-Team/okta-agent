@@ -2,13 +2,7 @@
 name: okta-directory-ingestion
 skill_type: skill
 description: >-
-  Natively mirror the Okta directory (users, groups, applications) into the
-  medulla knowledge graph as typed OWL nodes via the okta-agent MCP
-  server. Use when the agent must ingest or refresh Okta identities/groups/apps
-  in the KG so they can be queried, related, and reasoned over alongside the rest
-  of the ecosystem. Do NOT use for live user lifecycle (okta-user-lifecycle) or
-  access administration (okta-access-management) — this is a read-and-push
-  ingestion path only.
+  Mirror the Okta directory (users, groups, applications) into the knowledge graph as typed nodes via the okta-agent MCP server. Use to ingest or refresh Okta identities for graph queries. Do NOT use for live user lifecycle (okta-user-lifecycle) or access changes (okta-access-management).
 license: MIT
 tags: [okta, knowledge-graph, ingestion, identity, mcp]
 metadata:
@@ -16,6 +10,8 @@ metadata:
   version: '0.1.0'
 ---
 # Okta Directory Ingestion
+
+Scope: Natively mirror the Okta directory (users, groups, applications) into the medulla knowledge graph as typed OWL nodes via the okta-agent MCP server. Use when the agent must ingest or refresh Okta identities/groups/apps in the KG so they can be queried, related, and reasoned over alongside the rest of the ecosystem. Do NOT use for live user lifecycle (okta-user-lifecycle) or access administration (okta-access-management) — this is a read-and-push ingestion path only.
 
 The native "maximum ingestion" path for the Okta connector: list the directory
 via the Okta Management API and push it into the ONE medulla knowledge
@@ -39,6 +35,22 @@ Connect via the `mcp-client` skill against the **`okta-agent`** MCP server. Need
 the same `OKTA_ORG_URL` + `OKTA_API_TOKEN` (or OAuth) credentials as the other
 Okta skills, plus a reachable medulla engine for the write to land
 (otherwise `ingested` comes back `null`).
+
+## Steps
+
+1. Confirm connectivity by calling `okta_list_users` with `limit` = 1. Verify one user record comes back without an authentication error.
+2. Bound the run by choosing `limit` (page size) and `max_items` (overall cap) for the objects to mirror. Verify both values are below the org size you expect to pull.
+3. Run `okta_ingest_users`, `okta_ingest_groups` or `okta_ingest_apps` with those bounds, or `okta_ingest_all` for all three. Verify the response reports a `listed` count above zero.
+4. Check the `ingested` field of the response. Verify it is a number, since `null` means no graph engine was reachable.
+5. Re-run the same tool, for example `okta_ingest_all`, after changes in Okta. Verify the counts are stable, because nodes are merged by id.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| `ingested` is null | No medulla engine reachable, so only the listing happened | Start or point to the graph engine, then call `okta_ingest_all` again and check `ingested`. |
+| 401 or 403 from Okta | `OKTA_ORG_URL` or `OKTA_API_TOKEN` missing or too weak | Set both variables with a read-capable token, then call `okta_list_users` with `limit` = 1. |
+| Missing membership edges | A plain user listing does not embed group ids | Run `okta_ingest_groups`, and use `okta_list_user_groups` for the specific user if edges are still missing. |
 
 ## Tools
 | Tool | Effect |
